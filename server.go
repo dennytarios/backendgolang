@@ -4,11 +4,24 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
+	"database/sql"
+	"log"
 )
 
+const (
+    host     = "localhost"
+    port     = "5432"
+    user     = "postgres"
+    password = "admin"
+    dbname   = "backendgolang"
+)
+
+
+
 func main() {
+	
 	r := mux.NewRouter()
 
 	// Handle root / default route
@@ -20,7 +33,8 @@ func main() {
 	r.HandleFunc("/dashboard", DashboardHandler)
 
 	http.Handle("/", r)
-	fmt.Println("Server ready 1")
+	fmt.Println("Server ready")
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -37,6 +51,15 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+
+	// String koneksi
+	const connStr = "host=" + host + " port=" + port + " user=" + user + " password=" + password + " dbname=" + dbname + " sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer db.Close()
+
 	// Mengelola data masukan pengguna dari form login
 	username := r.PostFormValue("username")
 	password := r.PostFormValue("password")
@@ -47,14 +70,21 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Jika autentikasi berhasil, Anda dapat mengarahkan pengguna ke halaman lain
 	// atau memberikan respons sukses
-	if username == "admin" && password == "password" {
-		http.Redirect(w, r, "/dashboard", http.StatusFound)
+	var dbUsername, dbPassword string 
+	err = db.QueryRow("select username, password from users where username = $1", username).Scan(&dbUsername, &dbPassword)
+	if err != nil {
+		log.Println("Error querying database:", err)
+		http.Error(w, "Autentikasi gagal", http.StatusUnauthorized)
 		return
 	}
 
-	// Jika autentikasi gagal, Anda dapat menampilkan pesan kesalahan
-	errorMessage := "Username atau password salah"
-	http.Error(w, errorMessage, http.StatusUnauthorized)
+	 // Verifikasi kata sandi
+	 if password != dbPassword {
+		http.Error(w, "Kata sandi salah", http.StatusUnauthorized)
+		return
+	}
+	
+	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
