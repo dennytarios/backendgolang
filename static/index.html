@@ -1,16 +1,99 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Halaman Utama</title>
-    <link rel="stylesheet" type="text/css" href="static/style/global.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Homepage</title>
 </head>
-
 <body>
-    <h1>Welcome to my Humble RWID!</h1>
-    <p class="patriot">Ini adalah halaman utama dari aplikasi web Go kami. Keren kan????</p>
-    <p class="patriot"><a href="login">Login</a></p>
-    <img src="https://miro.medium.com/v2/resize:fit:1000/format:webp/1*xPtnbPkaUN10nFXcPZP0nw.jpeg" />
-</body>
 
+<!-- Navigasi Utama -->
+<!-- HTML -->
+<nav class="bg-green-500 p-4 text-white">
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-xl font-semibold">Remote Worker Indonesia</h1>
+        <div id="menuItems" class="hidden md:block">
+            <a href="#" class="ml-4">Home</a>
+            <a href="#" class="ml-4">About</a>
+            <a href="#" class="ml-4">Contact</a>
+            <!-- ini nanti untuk logout aja -->
+            <!-- <a href="/login" class="text-white hover:text-gray-200 ml-4">Login</a> -->
+        </div>
+        <div id="mobileMenu" class="md:hidden">
+            <button id="menuButton" class="text-white hover:text-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        
+    </div>
+</nav>
+
+<script>
+// JavaScript
+var menuButton = document.getElementById('menuButton');
+var menuItems = document.getElementById('menuItems');
+
+menuButton.addEventListener('click', function() {
+    if (menuItems.style.display === 'block') {
+        menuItems.style.display = 'none';
+    } else {
+        menuItems.style.display = 'block';
+    }
+});
+</script>
+
+<!-- Carousel Image -->
+<div class="bg-gray-100">
+    <div class="container mx-auto py-10">
+        <div class="rounded-lg shadow-lg">
+            <img src="static/img/rwid.jpg" alt="Carousel Image" class="w-full h-auto rounded-lg">
+        </div>
+    </div>
+</div>
+<div class="flex flex-col items-center justify-center h-auto">
+    <h1 class="text-4xl font-bold mb-6">Selamat Datang di Komunitas RWID!</h1>
+    <p class="text-gray-600 mb-8">Belum memiliki akun? Daftar sekarang dan bergabunglah dengan kami!</p>
+    <div id="google-button" class="w-full">Tombol google akan ada disini</div>
+</div>
+
+<!-- Services -->
+<section class="py-10">
+    <div class="container mx-auto">
+        <h2 class="text-2xl font-semibold text-center mb-6">Produk dan Layanan</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Service Item 1 -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-2">Super Intensive Reguler</h3>
+                <p class="text-gray-600">Upgrade keterampilan dan sukses dalam remote work dengan bimbingan personal eksklusif dari mentor ahli kami. Bergabunglah dengan komunitas yang berdedikasi dan raih karir yang sukses dengan dukungan yang penuh. Dapatkan panduan terbaik dalam industri ini, dan bersiaplah untuk mencapai langkah terdepan dalam karir Anda!</p>
+                <h4 class="mt-4 text-2xl font-semibold">$20/month</h4>
+            </div>
+            <!-- Service Item 2 -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-2">Super Intensive VIP</h3>
+                <p class="text-gray-600">Dapatkan pengalaman eksklusif dengan sesi Zoom 1 on 1 bersama mentor ahli kami. Sesuaikan belajar dengan waktu dan kesibukanmu! Upgrade keterampilan dan kesuksesan Anda dalam remote work dengan panduan personal yang disesuaikan sepenuhnya dengan kebutuhan Anda. Bergabunglah sekarang untuk langkah terdepan dalam karir Anda!</p>
+                <h4 class="mt-4 text-2xl font-semibold">$20/month</h4>
+            </div>
+            <!-- Service Item 3 -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-2">Startup Coaching</h3>
+                <p class="text-gray-600">Apakah Anda memiliki visi untuk memulai bisnis startup yang inovatif? Dengan bimbingan khusus kami, Anda akan mengubah visi Anda menjadi kenyataan. Dapatkan panduan langkah demi langkah untuk merancang, meluncurkan, dan mengembangkan startup Anda. Mari bersama-sama membangun masa depan yang cerah bagi bisnis Anda!</p>
+                <h4 class="mt-4 text-2xl font-semibold">$20/month</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Footer -->
+<footer class="bg-green-500 text-white py-6">
+    <div class="container mx-auto text-center">
+        <p>&copy; 2023 Remote Worker Indonesia. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
 </html>
