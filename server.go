@@ -31,11 +31,21 @@ func main() {
 	r.HandleFunc("/login", LoginPageHandler).Methods("GET")
 	r.HandleFunc("/login", LoginHandler).Methods("POST")
 	r.HandleFunc("/dashboard", DashboardHandler)
+	r.HandleFunc("/privacy-policy", PrivacyHandler)
+	r.HandleFunc("/tos", TosHandler)
 
 	http.Handle("/", r)
 	fmt.Println("Server ready")
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.ListenAndServe(":8080", nil)
+}
+
+func TosHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "static/tos.html")
+}
+
+func PrivacyHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "static/privacy.html")
 }
 
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
