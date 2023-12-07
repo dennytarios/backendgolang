@@ -8,6 +8,21 @@ import (
 	_ "github.com/lib/pq"
 	"database/sql"
 	"log"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+	"context"
+)
+
+var (
+	googleOAuthConfig = oauth2.Config{
+		ClientID:     "239099467796-cjai71c4glp852dhq6idnhk8cmipkoil.apps.googleusercontent.com",
+		ClientSecret: "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",
+		RedirectURL:  "http://localhost:8080/callback", // Ganti dengan URL callback yang sesuai
+		Scopes:       []string{"profile", "email"},
+		Endpoint:     google.Endpoint,
+	}
+
+	oauthStateString = "randomstring"
 )
 
 const (
@@ -28,17 +43,49 @@ func main() {
 	r.HandleFunc("/", HomeHandler)
 	r.HandleFunc("/about", AboutHandler)
 	r.HandleFunc("/search", SearchHandler).Methods("GET")
-	r.HandleFunc("/login", LoginPageHandler).Methods("GET")
-	r.HandleFunc("/login", LoginHandler).Methods("POST")
+	// r.HandleFunc("/login", LoginPageHandler).Methods("GET")
+	// r.HandleFunc("/login", LoginHandler).Methods("POST")
 	r.HandleFunc("/dashboard", DashboardHandler)
 	r.HandleFunc("/privacy-policy", PrivacyHandler)
 	r.HandleFunc("/tos", TosHandler)
+	r.HandleFunc("/login", GoogleLoginHandler)
+	r.HandleFunc("/callback", GoogleCallbackHandler)
 
 	http.Handle("/", r)
 	fmt.Println("Server ready")
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.ListenAndServe(":8080", nil)
 }
+
+func GoogleLoginHandler(w http.ResponseWriter, r *http.Request) {
+	url := googleOAuthConfig.AuthCodeURL(oauthStateString)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+}
+
+func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
+	state := r.FormValue("state")
+	if state != oauthStateString {
+		fmt.Println("Invalid OAuth state")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	code := r.FormValue("code")
+	token, err := googleOAuthConfig.Exchange(context.Background(), code)
+	if err != nil {
+		fmt.Printf("Code exchange failed: %v\n", err)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	// Anda dapat menggunakan token.AccessToken untuk mengambil informasi pengguna dari Google.
+	// Selanjutnya, tangani informasi pengguna sesuai kebutuhan Anda.
+
+	fmt.Printf("Access Token: %s\n", token.AccessToken)
+
+	http.Redirect(w, r, "/dashboard", http.StatusTemporaryRedirect)
+}
+
 
 func TosHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/tos.html")

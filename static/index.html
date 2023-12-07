@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <title>Homepage</title>
+   
 </head>
 <body>
 
@@ -56,7 +57,7 @@ menuButton.addEventListener('click', function() {
 <div class="flex flex-col items-center justify-center h-auto">
     <h1 class="text-4xl font-bold mb-6">Selamat Datang di Komunitas RWID!</h1>
     <p class="text-gray-600 mb-8">Belum memiliki akun? Daftar sekarang dan bergabunglah dengan kami!</p>
-    <div id="google-button" class="w-full">Tombol google akan ada disini</div>
+    <div id="google-button" class="w-full flex justify-center items-center"></div>
 </div>
 
 <!-- Services -->
@@ -94,6 +95,67 @@ menuButton.addEventListener('click', function() {
         <p>&copy; 2023 Remote Worker Indonesia. All rights reserved.</p>
     </div>
 </footer>
+<!-- Script untuk menampilkan tombol Google Login/Signup -->
+ <!-- Script untuk memuat Google API -->
+ <script src="https://apis.google.com/js/platform.js" async defer></script>
+ <script>
+    window.onload = function() {
+        gapi.load('auth2', function() {
+            gapi.auth2.init({
+                client_id: '239099467796-cjai71c4glp852dhq6idnhk8cmipkoil.apps.googleusercontent.com'
+            });
 
+            gapi.signin2.render('google-button', {
+                'scope': 'profile email',
+                'width': 200,
+                'height': 40,
+                'longtitle': true,
+                'theme': 'dark',
+                'onsuccess': onGoogleSignIn,
+                'onfailure': onGoogleSignInFailure
+            });
+        });
+
+        function onGoogleSignIn(googleUser) {
+            // Mendapatkan informasi pengguna yang masuk
+            var profile = googleUser.getBasicProfile();
+            var idToken = googleUser.getAuthResponse().id_token;
+
+            // Mengirimkan ID token ke server Anda untuk verifikasi
+            // Gantilah URL dengan endpoint server Anda
+            fetch('/your-server-endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id_token: idToken })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Tangani respons dari server di sini, misalnya, login pengguna atau redirect
+                if (data.success) {
+                    // Pengguna berhasil masuk atau mendaftar, lakukan tindakan yang sesuai
+                    console.log('Login atau registrasi berhasil');
+                } else {
+                    // Login atau registrasi gagal, tangani kesalahan atau tampilkan pesan kesalahan
+                    console.error('Login atau registrasi gagal');
+                }
+            })
+            .catch(error => {
+                // Tangani kesalahan komunikasi dengan server
+                console.error('Terjadi kesalahan komunikasi dengan server', error);
+            });
+        }
+
+        function onGoogleSignInFailure(error) {
+            console.log('Login dengan Google gagal: ' + error);
+        }
+
+        // Tambahkan event listener untuk tautan "Daftar Sekarang"
+        // document.getElementById('custom-signup-link').addEventListener('click', function() {
+        //     // Handle tindakan saat tautan "Daftar Sekarang" diklik
+        // });
+    };
+ </script>
 </body>
 </html>
