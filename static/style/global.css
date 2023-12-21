@@ -4,3 +4,17 @@
     background-color: blue;
     color: red;
 }
+
+/* CSS untuk tombol login */
+#loginButton {
+    background-color: #4285f4;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#loginButton:hover {
+    background-color: #357ae8;
+}

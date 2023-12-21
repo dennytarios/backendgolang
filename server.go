@@ -40,6 +40,11 @@ func main() {
 	http.Handle("/", r)
 	fmt.Println("Server ready")
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	r.HandleFunc("/style/global.css", func(w http.ResponseWriter, r *http.Request) {
+		// Set tipe MIME menjadi 'text/css'
+		w.Header().Set("Content-Type", "text/css")
+		http.ServeFile(w, r, "static/style/global.css")
+	})
 	http.ListenAndServe(":8080", nil)
 }
 
