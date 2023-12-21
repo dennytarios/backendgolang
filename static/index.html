@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <title>Homepage</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="style/global.css" rel="stylesheet">
+    <title>RWID Platform</title>
 </head>
 <body>
 
@@ -56,7 +58,9 @@ menuButton.addEventListener('click', function() {
 <div class="flex flex-col items-center justify-center h-auto">
     <h1 class="text-4xl font-bold mb-6">Selamat Datang di Komunitas RWID!</h1>
     <p class="text-gray-600 mb-8">Belum memiliki akun? Daftar sekarang dan bergabunglah dengan kami!</p>
-    <div id="google-button" class="w-full">Tombol google akan ada disini</div>
+    <div id="loginButton">
+        <i class="fab fa-google"></i> Login with Google
+    </div>
 </div>
 
 <!-- Services -->
@@ -94,6 +98,52 @@ menuButton.addEventListener('click', function() {
         <p>&copy; 2023 Remote Worker Indonesia. All rights reserved.</p>
     </div>
 </footer>
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpEElh_spfDY6XWCTFPQorbcfVkKtap6c",
+      authDomain: "golangbackend-2cc64.firebaseapp.com",
+      projectId: "golangbackend-2cc64",
+      storageBucket: "golangbackend-2cc64.appspot.com",
+      messagingSenderId: "657570454391",
+      appId: "1:657570454391:web:231f399995a309c2691f72",
+      measurementId: "G-1MXVQDR0RL"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    console.log('Hasilnya');
+    console.log(app);
 
+    // Mendapatkan instance Auth
+    const auth = getAuth();
+  
+    // Menangani tindakan klik pada tombol login
+    document.addEventListener("DOMContentLoaded", function() {
+        const loginButton = document.getElementById('loginButton');
+        loginButton.addEventListener('click', () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    // Handle hasil login berhasil di sini (misalnya, redirect atau menampilkan info pengguna)
+                    console.log('Login berhasil', result.user);
+                })
+                .catch((error) => {
+                    // Handle error login di sini (misalnya, menampilkan pesan kesalahan)
+                    console.error('Login gagal', error);
+                });
+        });
+    });
+  </script>
 </body>
 </html>
