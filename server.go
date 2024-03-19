@@ -52,7 +52,7 @@ func initFirebaseAdmin() {
 	ctx := context.Background()
 
 	// Konfigurasi Firebase Admin SDK dengan file konfigurasi yang diunduh dari Firebase Console
-	opt := option.WithCredentialsFile("golangbackend-2cc64-firebase-adminsdk-wjnyf-6bf7feec42.json")
+	opt := option.WithCredentialsFile("golangbackend-2cc64-firebase-adminsdk-wjnyf-cb03a5544d.json")
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		log.Fatalf("error initializing app: %v\n", err)
