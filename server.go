@@ -1,5 +1,6 @@
 package main
 
+// Package yang digunakan
 import (
 	"database/sql"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 	"google.golang.org/api/option"
 )
 
+// Konfigurasi database postgre
 const (
 	host     = "localhost"
 	port     = "5432"
@@ -22,6 +24,7 @@ const (
 	dbname   = "backendgolang"
 )
 
+// Fungsi yang diakses pertama kali oleh go
 func main() {
 	initFirebaseAdmin()
 
@@ -48,6 +51,7 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 
+// Membuat aplikasi ini bisa mengakses layanan firebase
 func initFirebaseAdmin() {
 	ctx := context.Background()
 
@@ -67,29 +71,36 @@ func initFirebaseAdmin() {
 		return
 	}
 	fmt.Println("Firebase Admin ready")
-
 }
 
+// Dibutuhkan oleh Google Authentication
 func TosHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/tos.html")
 }
 
+// Dibutuhkan oleh Google Authentication
 func PrivacyHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/privacy.html")
 }
 
+// Akan digantikan oleh static page
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("About"))
 }
 
+// Form login yang tidak akan dipakai lagi
 func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/login.html")
 }
 
+// Ini nanti hanya bisa diakses oleh member yang berhasil login
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/dashboard.html")
 }
 
+// ini sekedar menunjukkan bagaimana mengakses database PosgreSQL
+// tidak untuk dicontoh karena password tentu tidak boleh disimpan as is
+// wajib di hash (minimal) atau di encrypt
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// String koneksi
@@ -127,15 +138,28 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
+// Halaman utama aplikasi
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/index.html")
 }
 
+// Fungsi ini sekedar menunjukkan bagaimana cara membaca parameter dari request
+// Contoh: http://localhost:8080/search?a=2&b=3&q=eko akan menghasilkan output:
+// Hasil pencarian untuk: eko. Penjumlahan: 2+3=5
+// Perhatikan cara mengakses nilai q, a dan b
+// Go bisa mendeklarasikan dan sekaligus menginisialisasi 
+//    sA := vars.Get("a")
+// adalah deklarasi sekaligus inisialisasi
+// Bisa seperti ini:
+//    var sA string
+//    sA = vars.Get("a")
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	vars := r.URL.Query()
 	query := vars.Get("q")
+
 	sA := vars.Get("a")
 	sB := vars.Get("b")
+
 
 	a, errA := strconv.Atoi(sA)
 	b, errB := strconv.Atoi(sB)
