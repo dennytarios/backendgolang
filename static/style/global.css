@@ -2,7 +2,7 @@
 
 /* CSS untuk tombol login */
 #loginButton {
-    background-color: #4285f4;
+    background-color: #008172; /* 4285f4 */
     color: #fff;
     padding: 10px 20px;
     border: none;
@@ -10,6 +10,30 @@
     border-radius: 4px;
 }
 
+.rwid-bold {
+    color: #008172;
+  }
+
+.rwid-background {
+    background-color: #008172;
+}
+
+/* global.css atau file CSS yang sesuai */
+.rwid-hover:hover {
+    background-color: #66b132 !important;
+  }
+  
+
 #loginButton:hover {
-    background-color: #357ae8;
+    background-color: #0a7029; /* 357ae8 */
+}
+
+/* Mengubah warna bullet pagination menjadi hijau */
+.swiper-pagination-bullet {
+    background-color: green; /* Atau gunakan nilai hex warna hijau yang spesifik, misal #00ff00 */
+}
+
+/* Mengubah warna bullet aktif menjadi hijau tua atau warna hijau lainnya */
+.swiper-pagination-bullet-active {
+    background-color: darkgreen; /* Atau gunakan nilai hex yang spesifik */
 }

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/sessions"
 
@@ -23,6 +24,7 @@ import (
 
 var templates *template.Template
 var store = sessions.NewCookieStore([]byte("your-secret-key"))
+var devMode bool
 
 // Konfigurasi database postgre
 const (
@@ -58,11 +60,12 @@ func clearSessionHandler(w http.ResponseWriter, r *http.Request) {
 
 // Fungsi yang diakses pertama kali oleh go
 func main() {
-	devMode := os.Getenv("DEV_MODE") == "true" // TODO: mungkin akan kepakai
+	devMode = os.Getenv("DEV_MODE") == "true" // TODO: mungkin akan kepakai
 
 	initFirebaseAdmin()
-	precompileTemplate()
-
+	if !devMode {
+		precompileTemplate()
+	}	
 	r := mux.NewRouter()
 
 	// Handle root / default route
@@ -236,14 +239,35 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
     }
 	data := struct {
         IsLoggedIn bool
+		DevMode bool
+		TimeStamp time.Time
     }{
         IsLoggedIn: isLoggedIn,
+		DevMode: devMode,
+		TimeStamp: time.Now(),
     }
 
-	err = templates.ExecuteTemplate(w, "index.html", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if devMode {
+		tmpl, err := template.ParseFiles("static/index.html")
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+		err = tmpl.Execute(w, data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+	}else{
+		err = templates.ExecuteTemplate(w, "index.html", data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
+
+
+
+	
 }
 
 func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
