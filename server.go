@@ -3,17 +3,26 @@ package main
 // Package yang digunakan
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
-	firebase "firebase.google.com/go"
+	"github.com/gorilla/sessions"
+
+	"firebase.google.com/go"
+	"firebase.google.com/go/auth"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"golang.org/x/net/context"
 	"google.golang.org/api/option"
 )
+
+var templates *template.Template
+var store = sessions.NewCookieStore([]byte("your-secret-key"))
 
 // Konfigurasi database postgre
 const (
@@ -24,9 +33,35 @@ const (
 	dbname   = "backendgolang"
 )
 
+func clearSessionHandler(w http.ResponseWriter, r *http.Request) {
+    // Mendapatkan session
+    session, err := store.Get(r, "session-name")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // Mengatur MaxAge menjadi -1 memaksa penghapusan cookie
+    session.Options.MaxAge = -1
+
+    // Menyimpan perubahan untuk menerapkan penghapusan
+    err = session.Save(r, w)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // Redirect atau memberikan response lain setelah "membersihkan" session
+}
+
+
+
 // Fungsi yang diakses pertama kali oleh go
 func main() {
+	devMode := os.Getenv("DEV_MODE") == "true" // TODO: mungkin akan kepakai
+
 	initFirebaseAdmin()
+	precompileTemplate()
 
 	r := mux.NewRouter()
 
@@ -39,6 +74,11 @@ func main() {
 	r.HandleFunc("/dashboard", DashboardHandler)
 	r.HandleFunc("/privacy-policy", PrivacyHandler)
 	r.HandleFunc("/tos", TosHandler)
+	r.HandleFunc("/verify-token", VerifyTokenHandler).Methods("POST")
+
+	if devMode{
+		r.HandleFunc("/del", clearSessionHandler)
+	}
 
 	http.Handle("/", r)
 	fmt.Println("Server ready")
@@ -50,6 +90,47 @@ func main() {
 	})
 	http.ListenAndServe(":8080", nil)
 }
+
+// TODO: jadikan function ini bisa dipakai banyak variable session
+func createSession(w http.ResponseWriter, r *http.Request, kv ...interface{}) {
+    // Membuat atau mengambil session
+    session, err := store.Get(r, "session-name")
+    if err != nil {
+        http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
+        return
+    }
+
+    // Memastikan jumlah argumen kv adalah genap (key-value pairs)
+    if len(kv)%2 != 0 {
+        log.Println("createSession error: Argumen harus berpasangan (key-value)")
+        return
+    }
+
+    // Menyimpan pasangan key-value ke dalam session
+    for i := 0; i < len(kv); i += 2 {
+        key, ok := kv[i].(string)
+        if !ok {
+            log.Println("createSession error: Key harus bertipe string")
+            return
+        }
+        session.Values[key] = kv[i+1]
+    }
+
+    // Simpan perubahan session
+    err = session.Save(r, w)
+    if err != nil {
+        // Handle error
+        log.Printf("createSession error: %v\n", err)
+    }
+}
+
+
+func precompileTemplate() {
+	// Menggunakan template.ParseGlob untuk memuat semua file template
+	templates = template.Must(template.ParseGlob("static/*.html"))
+}
+
+var FirebaseAuthClient *auth.Client
 
 // Membuat aplikasi ini bisa mengakses layanan firebase
 func initFirebaseAdmin() {
@@ -64,8 +145,7 @@ func initFirebaseAdmin() {
 	}
 
 	// Inisialisasi client Firebase Auth
-	client, err := app.Auth(ctx)
-	_ = client
+	FirebaseAuthClient, err = app.Auth(ctx)
 	if err != nil {
 		log.Fatalf("error creating Auth client: %v\n", err)
 		return
@@ -140,7 +220,55 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 // Halaman utama aplikasi
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "static/index.html")
+
+	// Ubah dari sekedar serving static file ke bentuk templating engine
+	//http.ServeFile(w, r, "static/index.html")
+
+	session, err := store.Get(r, "session-name")
+    if err != nil {
+        http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
+        return
+    }
+
+	isLoggedIn := false // Default false sampai dibuktikan sebaliknya
+    if _, ok := session.Values["user_id"]; ok {
+        isLoggedIn = true
+    }
+	data := struct {
+        IsLoggedIn bool
+    }{
+        IsLoggedIn: isLoggedIn,
+    }
+
+	err = templates.ExecuteTemplate(w, "index.html", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
+    // Struct untuk mem-parsing request body
+    var requestBody struct {
+        Token string `json:"token"`
+    }
+    if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+        http.Error(w, "Bad request", http.StatusBadRequest)
+        return
+    }
+	ctx := r.Context()
+    // Verifikasi ID token
+    token, err := FirebaseAuthClient.VerifyIDToken(ctx, requestBody.Token)
+    if err != nil {
+        http.Error(w, "Invalid ID token", http.StatusUnauthorized) //TODO: jika ini terjadi, suruh login ulang.
+        return
+    }
+
+    // Token valid, atur session untuk user
+    createSession(w, r, "user_id", token.UID) // Fungsi createSession dari contoh sebelumnya
+
+    // Kirim response sukses ke client
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(map[string]string{"status": "success"})
 }
 
 // Fungsi ini sekedar menunjukkan bagaimana cara membaca parameter dari request

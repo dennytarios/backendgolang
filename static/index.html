@@ -60,9 +60,17 @@ menuButton.addEventListener('click', function() {
 <div class="flex flex-col items-center justify-center h-auto">
     <h1 class="text-4xl font-bold mb-6">Selamat Datang di Komunitas RWID!</h1>
     <p class="text-gray-600 mb-8">Belum memiliki akun? Daftar sekarang dan bergabunglah dengan kami!</p>
+    {{if .IsLoggedIn}}
+    <div id="backToDashboard">
+        <a href="/dashboard" style="text-decoration: none; color: inherit;">
+            <i class="fas fa-university"> Go to Dashboard</i>
+        </a>
+    </div>
+    {{else}}
     <div id="loginButton">
         <i class="fab fa-google"></i> Login with Google
     </div>
+    {{end}}
 </div>
 
 <!-- Services -->
@@ -132,6 +140,9 @@ menuButton.addEventListener('click', function() {
     const auth = getAuth();
   
     // Menangani tindakan klik pada tombol login
+    // jika berhasil, server harus diberitahu kalau user ini berhasil login
+    // caranya adalah dengan mempersiapkan variable session yang berisi
+    // isLoggedIn == true
     document.addEventListener("DOMContentLoaded", function() {
         const loginButton = document.getElementById('loginButton');
         loginButton.addEventListener('click', () => {
@@ -139,7 +150,35 @@ menuButton.addEventListener('click', function() {
             signInWithPopup(auth, provider)
                 .then((result) => {
                     // Handle hasil login berhasil di sini (misalnya, redirect atau menampilkan info pengguna)
-                    console.log('Login berhasil', result.user);
+                    // console.log('Login berhasil', result.user);
+                    // Dapatkan token ID
+                    // const token = result.user.getIdToken();
+                    result.user.getIdToken().then(token => {
+                        console.log('token', JSON.stringify({ token: token }));
+                        fetch("/verify-token", { //TOASK: kenapa harus diverify? GPT: Best practice keamanan
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ token: token }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "success") {
+                                // Redirect ke /dashboard jika status adalah success
+                                window.location.href = "/dashboard";
+                            } else {
+                                // Handle kasus ketika status bukan success
+                                console.error('Login tidak berhasil atau status bukan success');
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error); //TODO: handler lebih baik
+                        });
+
+                    }).catch(error => {
+                        console.error('Error getting token:', error); //TODO: handler lebih baik
+                    });
                 })
                 .catch((error) => {
                     // Handle error login di sini (misalnya, menampilkan pesan kesalahan)

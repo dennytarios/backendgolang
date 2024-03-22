@@ -2,7 +2,6 @@ module main
 
 go 1.21.4
 
-require github.com/gorilla/mux v1.8.1
 
 require (
 	cloud.google.com/go v0.110.10 // indirect
@@ -22,6 +21,9 @@ require (
 	github.com/google/uuid v1.4.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
+	github.com/gorilla/sessions v1.2.2
+	github.com/gorilla/mux v1.8.1
+	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/yuin/goldmark v1.4.13 // indirect
 	go.opencensus.io v0.24.0 // indirect
