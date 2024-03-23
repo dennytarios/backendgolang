@@ -21,8 +21,40 @@
 <body>
 
 <!-- Navigasi Utama -->
-<!-- HTML -->
-<nav class="bg-green-500 p-4 text-white rwid-background">
+<nav class="p-1 text-white rwid-background fixed top-0 left-0 z-50 w-full">
+  <div class="container mx-auto flex justify-between items-center">
+      Remote Worker Indonesia
+        <div>
+        </div>
+      <div id="menuItems" class="hidden md:block">
+          <a href="#" class="ml-4">Home</a>
+          <a href="#" class="ml-4">About</a>
+          <a href="#" class="ml-4">Contact</a>
+      </div>
+      <div id="mobileMenu" class="md:hidden relative">
+          <button id="menuButton" class="text-white hover:text-gray-200 focus:outline-none flex items-center">
+            {{ if not .IsLoggedIn}}
+              <img src="https://via.placeholder.com/20" alt="Avatar" class="rounded-full" /> <!-- Ganti URL gambar sesuai kebutuhan -->
+            {{ else }}
+              <img src="{{ .Photo}}" alt="Avatar" class="rounded-full w-5 h-5" /> <!-- Ganti URL gambar sesuai kebutuhan -->
+            {{ end }}
+          </button>
+          <!-- Menu Popup -->
+          <div id="popupMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Courses</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Return</a>
+          </div>
+      </div>        
+  </div>
+</nav>
+
+
+
+
+
+
+<!-- <nav class="bg-green-500 p-4 text-white rwid-background">
     <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-xl font-semibold">Remote Worker Indonesia</h1>
           <div >
@@ -34,11 +66,11 @@
         </div>
         <div id="mobileMenu" class="md:hidden">
             <button id="menuButton" class="text-white hover:text-gray-200">
-                <img src="https://via.placeholder.com/50" alt="Avatar" class="rounded-full" /> <!-- Ganti URL gambar sesuai kebutuhan -->
+                <img src="https://via.placeholder.com/50" alt="Avatar" class="rounded-full" /> 
             </button>
         </div>        
     </div>
-</nav>
+</nav> -->
 
 <script>
 // JavaScript
@@ -46,16 +78,28 @@ var menuButton = document.getElementById('menuButton');
 var menuItems = document.getElementById('menuItems');
 
 menuButton.addEventListener('click', function() {
-    if (menuItems.style.display === 'block') {
-        menuItems.style.display = 'none';
-    } else {
-        menuItems.style.display = 'block';
+  event.stopPropagation();
+  document.getElementById('popupMenu').classList.toggle('hidden');
+    // if (menuItems.style.display === 'block') {
+    //     menuItems.style.display = 'none';
+    // } else {
+    //     menuItems.style.display = 'block';
+    // }
+});
+
+document.addEventListener('click', function(event) {
+  var popupMenu = document.getElementById('popupMenu');
+  // Cek apakah klik terjadi di luar popupMenu dan menuButton
+  if (!popupMenu.contains(event.target) && !document.getElementById('menuButton').contains(event.target)) {
+    if (!popupMenu.classList.contains('hidden')) {
+      popupMenu.classList.add('hidden');
     }
+  }
 });
 </script>
 
 <!-- Swiper -->
-<div class="swiper-container relative">
+<div class="swiper-container relative mt-8">
     <div class="swiper-wrapper">
       <!-- Slides -->
       <div class="swiper-slide">
@@ -356,8 +400,6 @@ menuButton.addEventListener('click', function() {
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
-    console.log('Hasilnya');
-    console.log(app);
 
     // Mendapatkan instance Auth
     const auth = getAuth();
@@ -376,6 +418,7 @@ menuButton.addEventListener('click', function() {
                     // console.log('Login berhasil', result.user);
                     // Dapatkan token ID
                     // const token = result.user.getIdToken();
+                    console.log(result.user);
                     result.user.getIdToken().then(token => {
                         console.log('token', JSON.stringify({ token: token }));
                         fetch("/verify-token", { //TOASK: kenapa harus diverify? GPT: Best practice keamanan
@@ -383,13 +426,18 @@ menuButton.addEventListener('click', function() {
                             headers: {
                                 "Content-Type": "application/json",
                             },
-                            body: JSON.stringify({ token: token }),
+                            body: JSON.stringify({ 
+                              token: token, 
+                              name: result.user.displayName,
+                              email: result.user.email,
+                              photoURL: result.user.photoURL,
+                            }),
                         })
                         .then(response => response.json())
                         .then(data => {
                             if (data.status === "success") {
                                 // Redirect ke /dashboard jika status adalah success
-                                window.location.href = "/dashboard";
+                                window.location.href = "/";
                             } else {
                                 // Handle kasus ketika status bukan success
                                 console.error('Login tidak berhasil atau status bukan success');
@@ -462,6 +510,8 @@ function closePopup4(event) {
   }
 }
   </script>
+
+
   
 </body>
 </html>

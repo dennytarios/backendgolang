@@ -237,15 +237,35 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
     if _, ok := session.Values["user_id"]; ok {
         isLoggedIn = true
     }
+	var name, email, photo string
+	if val, ok := session.Values["user_name"].(string); ok {
+		name = val
+	}
+	
+	// Cek dan assign nilai session untuk Email, dengan penanganan jika nil atau bukan string
+	if val, ok := session.Values["user_email"].(string); ok {
+		email = val
+	}
+	
+	// Cek dan assign nilai session untuk Photo, dengan penanganan jika nil atau bukan string
+	if val, ok := session.Values["user_photo"].(string); ok {
+		photo = val
+	}
 	data := struct {
         IsLoggedIn bool
 		DevMode bool
 		TimeStamp time.Time
+		Name string 
+		Email string 
+		Photo string
     }{
         IsLoggedIn: isLoggedIn,
 		DevMode: devMode,
 		TimeStamp: time.Now(),
-    }
+		Name: name,
+		Email: email,
+		Photo: photo,
+	}
 
 	if devMode {
 		tmpl, err := template.ParseFiles("static/index.html")
@@ -274,6 +294,9 @@ func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
     // Struct untuk mem-parsing request body
     var requestBody struct {
         Token string `json:"token"`
+		Name string `json:"name"`
+		Email string `json:"email"`
+		PhotoURL string `json:"photoURL"`
     }
     if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
         http.Error(w, "Bad request", http.StatusBadRequest)
@@ -288,7 +311,15 @@ func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     // Token valid, atur session untuk user
-    createSession(w, r, "user_id", token.UID) // Fungsi createSession dari contoh sebelumnya
+	fmt.Println(requestBody.Name)	
+	fmt.Println(requestBody.Email)	
+	fmt.Println(requestBody.PhotoURL)	
+    createSession(w, r, 
+		"user_id", token.UID,
+		"user_name", requestBody.Name,
+		"user_email", requestBody.Email,
+		"user_photo", requestBody.PhotoURL,
+	)
 
     // Kirim response sukses ke client
     w.Header().Set("Content-Type", "application/json")
