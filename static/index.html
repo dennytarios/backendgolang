@@ -22,7 +22,7 @@
 
 <!-- Navigasi Utama -->
 <!-- HTML -->
-<nav class="bg-green-500 p-4 text-white" style="background-color: #008172;">
+<nav class="bg-green-500 p-4 text-white rwid-background">
     <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-xl font-semibold">Remote Worker Indonesia</h1>
         <!-- <div id="menuItems" class="hidden md:block">
@@ -146,7 +146,7 @@ menuButton.addEventListener('click', function() {
                 <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
                 </svg>
-                Akun premium<span class="fas fa-question-circle"  onclick="togglePopup()"></span>
+                Akun premium<span class="fa fa-info-circle rwid-tight" onclick="togglePopup()"></span>
                 <!-- Pembungkus Popup -->
                 <div id="popupWrapper" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);" onclick="closePopup(event)">
                     <!-- Popup -->
@@ -183,7 +183,7 @@ menuButton.addEventListener('click', function() {
                 <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
                 </svg>
-                Zoom peminatan dan bakat
+                Zoom peminatan dengan Assessor
               </li>
             
           </ul>
@@ -206,9 +206,14 @@ menuButton.addEventListener('click', function() {
 
   <div class="py-6 sm:py-6" >
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl rounded-3xl ring-1 ring-gray-200 lg:mx-0 lg:flex lg:max-w-none">
+        <div class="mx-auto max-w-2xl rounded-3xl ring-1 ring-gray-200 lg:mx-0 lg:flex lg:max-w-none relative">
+          <div class="absolute top-0 right-0 py-1 px-3 bg-yellow-500 text-white font-semibold rounded-bl-lg rounded-tr-lg">Recommended</div>
+          
         <div class="p-8 sm:p-10 lg:flex-auto">
-          <h3 class="text-2xl font-bold tracking-tight text-gray-900">SIM VIP</h3>
+          <div class="flex items-center space-x-2 mb-4">
+            <h3 class="text-2xl font-bold tracking-tight text-gray-900">SIM VIP</h3>
+          </div>
+          
           <p class="mt-6 text-base leading-7 text-gray-600">Semua fasilitas SIM Reguler, dengan tambahan fasilitas premium khusus untukmu</p>
           <div class="mt-10 flex items-center gap-x-4">
             <h4 class="flex-none text-sm font-semibold leading-6 rwid-bold">Fasilitas</h4>
@@ -227,12 +232,24 @@ menuButton.addEventListener('click', function() {
                 </svg>
                 Jadwal bisa disesuaikan
               </li>
+              <li class="flex gap-x-3">
+                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+                Kelas offline 24x pertemuan<span class="fa fa-info-circle rwid-tight"  onclick="togglePopup4()"></span>
+                <div id="popupWrapper4" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);" onclick="closePopup4(event)">
+                  <!-- Popup -->
+                  <div id="popup4" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 10px; width: 90%; max-width: 600px;">
+                    <p class="text-gray-600 mb-8 p-2 text-gray-600" >Dijalankan selama 2 bulan, kelas akan dimulai bersama-sama satu batch untuk materi fundamental sampai membangun portofolio pertama dan hunting job. Dilakukan di <a class="rwid-bold" target="_blank" href="https://maps.app.goo.gl/xe1rkVzkx5W4AxP96">Kantor Pusat RWID</a></p>
+                  </div>
+              </div>
+              </li>
       
             <li class="flex gap-x-3">
                 <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
                 </svg>
-                Intensive 40 hari di Villa<span class="fas fa-question-circle"  onclick="togglePopup2()"></span>
+                Intensive 40 hari di Villa<span class="fa fa-info-circle rwid-tight"  onclick="togglePopup2()"></span>
                 <!-- Pembungkus Popup -->
                 <div id="popupWrapper2" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);" onclick="closePopup2(event)">
                     <!-- Popup -->
@@ -252,7 +269,15 @@ menuButton.addEventListener('click', function() {
                 <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
                 </svg>
-                Biaya dikembalikan 100%<span class="fas fa-question-circle"  onclick="togglePopup2()"></span>
+                Biaya dikembalikan 100%<span class="fa fa-info-circle rwid-tight"  onclick="togglePopup3()"></span>
+                <!-- Pembungkus Popup -->
+                <div id="popupWrapper3" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);" onclick="closePopup3(event)">
+                  <!-- Popup -->
+                  <div id="popup3" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 10px; width: 90%; max-width: 600px;">
+                    <p class="text-gray-600 mb-8 p-2 text-gray-600" >Biaya pendaftaran tentunya bisa dikembalikan jika DAN hanya jika startup yang dikembangkan berprofit. Ini bukan investasi dan juga bukan hutang, namun hibah/pemberian. Jangan tuntut pengembaliannya jika startup tidak berprofit. Saya tulis secara mendetail <a class="rwid-bold" href="https://kumparan.com/eko-suprapto-wibowo/dear-kampus-tolong-kembalikan-biaya-pendidikan-kami-secara-utuh-22DLpZcGpT9" target="_blank" style="">di Kumparan</a>. Mindset, "Mana ada kampus/bootcamp yang repot-repot mengembalikan biaya pendaftaran kalau kamu sudah ikut kursusnya?". Gunakan mindset biaya kembali dalam 3-4 tahun. Anggap masuk S1 UGM, lulus, dan saat wisuda biaya kuliahmu dikembalikan.</p>
+                  </div>
+              </div>
+              
               </li>
              
               <li class="flex gap-x-3">
@@ -414,6 +439,30 @@ function closePopup2(event) {
   }
 }
 
+function togglePopup3() {
+  const popupWrapper = document.getElementById("popupWrapper3");
+  popupWrapper.style.display = popupWrapper.style.display === "none" ? "block" : "none";
+}
+
+function closePopup3(event) {
+  // Cek jika yang diklik adalah pembungkus, bukan popup itu sendiri
+  if (event.target.id === "popupWrapper3") {
+    togglePopup3(); // atau langsung set display:none; tergantung implementasi
+  }
+}
+
+
+function togglePopup4() {
+  const popupWrapper = document.getElementById("popupWrapper4");
+  popupWrapper.style.display = popupWrapper.style.display === "none" ? "block" : "none";
+}
+
+function closePopup4(event) {
+  // Cek jika yang diklik adalah pembungkus, bukan popup itu sendiri
+  if (event.target.id === "popupWrapper4") {
+    togglePopup4(); // atau langsung set display:none; tergantung implementasi
+  }
+}
   </script>
   
 </body>

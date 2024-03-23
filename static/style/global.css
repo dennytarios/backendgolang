@@ -23,6 +23,9 @@
     background-color: #66b132 !important;
   }
   
+.rwid-tight{
+    margin-left: -10px;
+}
 
 #loginButton:hover {
     background-color: #0a7029; /* 357ae8 */
