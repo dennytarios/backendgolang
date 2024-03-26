@@ -43,7 +43,8 @@
           <div id="popupMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
               <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
               <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Courses</a>
-              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Return</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Affiliate</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">VIP Return</a>
           </div>
       </div>        
   </div>
@@ -134,19 +135,22 @@ document.addEventListener('click', function(event) {
     </div>
 </div> -->
 <div class="flex flex-col items-center justify-center h-auto">
-    <h2 class="text-4xl font-bold mb-2 p-2 mt-2 tracking-tight text-gray-900 sm:text-2xl rwid-bold">Kerja dari rumah bergaji dollar?</h2>
-        
+    <h2 class="text-4xl font-bold mb-2 p-2 mt-2 tracking-tight text-gray-900 sm:text-2xl rwid-bold">Kerja dari rumah bergaji dollar?</h2>        
     <p class="text-gray-600 text-lg  leading-8 mb-8 p-2 text-justify text-gray-600" >Pelajari course upgrade skill yang sesuai untukmu sampai kamu menembus remote work bersama kami! Berlaku juga untuk <b class="rwid-bold">2 anggota keluargamu</b> dimana tiap anggota keluarga bisa mempelajari course yang berbeda. Tanpa tambahan biaya! <b class="rwid-bold">Lifetime.</b></p>
-    {{if .IsLoggedIn}}
-    <div id="backToDashboard">
-        <a href="/dashboard" style="text-decoration: none; color: inherit;">
-            <i class="fas fa-university"> Go to Dashboard</i>
-        </a>
+    {{if not .IsLoggedIn}}
+      <div id="loginButton">
+          <i class="fab fa-google"></i> Masuk dengan Google
+      </div>
+    {{ else }}
+      {{ if eq .Membership ""}}
+      <!-- <p class="text-gray-600 text-lg  mb-8 p-2 text-center text-gray-600">Munculkan CTA untuk join RWID</p> -->
+      <div class="flex flex-wrap items-center p-4">
+      <span class="bg-blue-400 hover:shadow hover:bg-danger transition duration-150 px-2 py-1 rounded text-lg text-white mx-1 my-2">
+            Pilih membershipmu sebelum berproses bersama RWID!👇👇👇
+      </span>
+        
     </div>
-    {{else}}
-    <div id="loginButton">
-        <i class="fab fa-google"></i> Masuk dengan Google
-    </div>
+      {{ end }}
     {{end}}
 </div>
 

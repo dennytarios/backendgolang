@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"time"
 
+	"cloud.google.com/go/firestore"
 	"github.com/gorilla/sessions"
 
 	"firebase.google.com/go"
@@ -20,6 +21,8 @@ import (
 	_ "github.com/lib/pq"
 	"golang.org/x/net/context"
 	"google.golang.org/api/option"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var templates *template.Template
@@ -117,6 +120,7 @@ func createSession(w http.ResponseWriter, r *http.Request, kv ...interface{}) {
             return
         }
         session.Values[key] = kv[i+1]
+		log.Printf("Key: %s, Value: %v\n", key, kv[i+1])
     }
 
     // Simpan perubahan session
@@ -134,6 +138,7 @@ func precompileTemplate() {
 }
 
 var FirebaseAuthClient *auth.Client
+var FirestoreClient *firestore.Client
 
 // Membuat aplikasi ini bisa mengakses layanan firebase
 func initFirebaseAdmin() {
@@ -153,7 +158,13 @@ func initFirebaseAdmin() {
 		log.Fatalf("error creating Auth client: %v\n", err)
 		return
 	}
-	fmt.Println("Firebase Admin ready")
+	
+	FirestoreClient, err = app.Firestore(ctx)
+	if err != nil {
+		log.Fatalf("error creating Firestore client: %v\n", err)
+		return
+	}
+	fmt.Println("Firebase Auth | Firestore ready")
 }
 
 // Dibutuhkan oleh Google Authentication
@@ -237,7 +248,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
     if _, ok := session.Values["user_id"]; ok {
         isLoggedIn = true
     }
-	var name, email, photo string
+	var name, email, photo, membership string
 	if val, ok := session.Values["user_name"].(string); ok {
 		name = val
 	}
@@ -251,6 +262,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if val, ok := session.Values["user_photo"].(string); ok {
 		photo = val
 	}
+
+	// Cek dan assign nilai session untuk Photo, dengan penanganan jika nil atau bukan string
+	if val, ok := session.Values["user_membership"].(string); ok {
+		membership = val
+	}
 	data := struct {
         IsLoggedIn bool
 		DevMode bool
@@ -258,6 +274,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		Name string 
 		Email string 
 		Photo string
+		Membership string
     }{
         IsLoggedIn: isLoggedIn,
 		DevMode: devMode,
@@ -265,6 +282,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		Name: name,
 		Email: email,
 		Photo: photo,
+		Membership: membership,
 	}
 
 	if devMode {
@@ -311,15 +329,57 @@ func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     // Token valid, atur session untuk user
-	fmt.Println(requestBody.Name)	
-	fmt.Println(requestBody.Email)	
-	fmt.Println(requestBody.PhotoURL)	
-    createSession(w, r, 
+	// fmt.Println(requestBody.Name)	
+	// fmt.Println(requestBody.Email)	
+	// fmt.Println(requestBody.PhotoURL)	
+
+
+	// AMBIL DATA USER YANG LEBIH LENGKAP DARI FIRESOTRE
+	ctx = context.Background()
+	docRef := FirestoreClient.Collection("user").Doc(token.UID)
+	docSnapshot, err := docRef.Get(ctx)
+
+	var userData map[string]interface{}
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			// Dokumen tidak ditemukan, insert data baru
+			userData = map[string]interface{}{
+				"membership": "",
+			}
+			
+			_, err = docRef.Set(ctx, userData)
+			if err != nil {
+				// Handle error saat insert data
+				log.Printf("Gagal menyimpan data pengguna baru: %v", err)
+				return
+			}
+			log.Println("Data pengguna baru berhasil disimpan")
+		} else {
+			// Handle error lainnya
+			log.Printf("Error saat mendapatkan dokumen: %v", err)
+			return
+		}
+	} else if docSnapshot.Exists() {
+		log.Println("User sudah ada kan?")
+		userData = docSnapshot.Data()
+		
+	}
+
+	membershipValue, ok := userData["membership"].(string)
+	if ok {
+		log.Println("Membership:", membershipValue)
+	} else {
+		log.Println("Membership tidak ditemukan atau bukan tipe string")
+	}
+
+	createSession(w, r, 
 		"user_id", token.UID,
 		"user_name", requestBody.Name,
 		"user_email", requestBody.Email,
 		"user_photo", requestBody.PhotoURL,
+		"user_membership", membershipValue,
 	)
+
 
     // Kirim response sukses ke client
     w.Header().Set("Content-Type", "application/json")
