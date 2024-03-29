@@ -1,253 +1,116 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon">
-    
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    {{ if .DevMode }}
-        <link href="style/global.css?v={{ .TimeStamp}}" rel="stylesheet">
-    {{ else }}
-        <link href="style/global.css" rel="stylesheet">
-    {{ end }}
-
-    <title>RWID Platform</title>
-</head>
-<body>
-
-<!-- Navigasi Utama -->
-<nav class="p-1 text-white rwid-background fixed top-0 left-0 z-50 w-full">
-  <div class="container mx-auto flex justify-between items-center">
-      Remote Worker Indonesia
-        <div>
-        </div>
-      <div id="menuItems" class="hidden md:block">
-          <a href="#" class="ml-4">Home</a>
-          <a href="#" class="ml-4">About</a>
-          <a href="#" class="ml-4">Contact</a>
-      </div>
-      <div id="mobileMenu" class="md:hidden relative">
-          <button id="menuButton" class="text-white hover:text-gray-200 focus:outline-none flex items-center">
-            {{ if not .IsLoggedIn}}
-              <img src="https://via.placeholder.com/20" alt="Avatar" class="rounded-full" /> <!-- Ganti URL gambar sesuai kebutuhan -->
-            {{ else }}
-              <img src="{{ .Photo}}" alt="Avatar" class="rounded-full w-5 h-5" /> <!-- Ganti URL gambar sesuai kebutuhan -->
-            {{ end }}
-          </button>
-          <!-- Menu Popup -->
-          <div id="popupMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
-              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Courses</a>
-              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Affiliate</a>
-              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">VIP Return</a>
-          </div>
-      </div>        
-  </div>
-</nav>
-
-
-
-
-
-
-<!-- <nav class="bg-green-500 p-4 text-white rwid-background">
-    <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-xl font-semibold">Remote Worker Indonesia</h1>
-          <div >
-          </div>
-        <div id="menuItems" class="hidden md:block">
-            <a href="#" class="ml-4">Home</a>
-            <a href="#" class="ml-4">About</a>
-            <a href="#" class="ml-4">Contact</a>
-        </div>
-        <div id="mobileMenu" class="md:hidden">
-            <button id="menuButton" class="text-white hover:text-gray-200">
-                <img src="https://via.placeholder.com/50" alt="Avatar" class="rounded-full" /> 
-            </button>
-        </div>        
-    </div>
-</nav> -->
-
-<script>
-// JavaScript
-var menuButton = document.getElementById('menuButton');
-var menuItems = document.getElementById('menuItems');
-
-menuButton.addEventListener('click', function() {
-  event.stopPropagation();
-  document.getElementById('popupMenu').classList.toggle('hidden');
-    // if (menuItems.style.display === 'block') {
-    //     menuItems.style.display = 'none';
-    // } else {
-    //     menuItems.style.display = 'block';
-    // }
-});
-
-document.addEventListener('click', function(event) {
-  var popupMenu = document.getElementById('popupMenu');
-  // Cek apakah klik terjadi di luar popupMenu dan menuButton
-  if (!popupMenu.contains(event.target) && !document.getElementById('menuButton').contains(event.target)) {
-    if (!popupMenu.classList.contains('hidden')) {
-      popupMenu.classList.add('hidden');
-    }
-  }
-});
-</script>
-
-<!-- Swiper -->
-<div class="swiper-container relative mt-8">
-    <div class="swiper-wrapper">
-      <!-- Slides -->
-      <div class="swiper-slide">
-          <img src="static/img/1.jpeg" alt="Thumbnail 1" class="w-full object-cover h-48" />
-      </div>
-      <div class="swiper-slide">
-          <img src="static/img/2.jpeg" alt="Thumbnail 2" class="w-full object-cover h-48" />
-      </div>
-      <div class="swiper-slide">
-          <img src="static/img/3.jpg" alt="Thumbnail 3" class="w-full object-cover h-48" />
-      </div>
-      <div class="swiper-slide">
-          <img src="static/img/4.jpeg" alt="Thumbnail 4" class="w-full object-cover h-48" />
-      </div>
-    </div>
-    <!-- Pagination, Navigation, and Scrollbar -->
-    <div class="swiper-pagination"></div>
-    <div class="swiper-button-prev absolute top-1/2 left-0 transform -translate-y-1/2 z-10 opacity-0" aria-label="Previous slide"></div>
-    <div class="swiper-button-next absolute top-1/2 right-0 transform -translate-y-1/2 z-10 opacity-0" aria-label="Next slide"></div>
-    <div class="swiper-scrollbar"></div>
-</div>
-
-
-  
-
-  
-<!-- <div class="bg-gray-100">
-    <div class="container mx-auto py-10">
-        <div class="rounded-lg shadow-lg">
-            <img src="static/img/rwid.jpg" alt="Carousel Image" class="w-full h-auto rounded-lg">
-        </div>
-    </div>
-</div> -->
+{{define "content"}}
 <div class="flex flex-col items-center justify-center h-auto">
-    <h2 class="text-4xl font-bold mb-2 p-2 mt-2 tracking-tight text-gray-900 sm:text-2xl rwid-bold">Kerja dari rumah bergaji dollar?</h2>        
-    <p class="text-gray-600 text-lg  leading-8 mb-8 p-2 text-justify text-gray-600" >Pelajari course upgrade skill yang sesuai untukmu sampai kamu menembus remote work bersama kami! Berlaku juga untuk <b class="rwid-bold">2 anggota keluargamu</b> dimana tiap anggota keluarga bisa mempelajari course yang berbeda. Tanpa tambahan biaya! <b class="rwid-bold">Lifetime.</b></p>
-    {{if not .IsLoggedIn}}
-      <div id="loginButton">
-          <i class="fab fa-google"></i> Masuk dengan Google
-      </div>
-    {{ else }}
-      {{ if eq .Membership ""}}
-      <!-- <p class="text-gray-600 text-lg  mb-8 p-2 text-center text-gray-600">Munculkan CTA untuk join RWID</p> -->
-      <div class="flex flex-wrap items-center p-4">
-      <span class="bg-blue-400 hover:shadow hover:bg-danger transition duration-150 px-2 py-1 rounded text-lg text-white mx-1 my-2">
-            Pilih membershipmu sebelum berproses bersama RWID!👇👇👇
-      </span>
-        
-    </div>
-      {{ end }}
-    {{end}}
-</div>
-
-<div class="bg-white py-6 sm:py-6" >
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl sm:text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl rwid-bold">Membership Super Intensive Mentoring</h2>
-        <p class="mt-6 text-lg leading-8 text-gray-600 text-justify">Di RWID, kamu tidak sekadar membeli kursus, namun kamu berinvestasi sekali untuk keanggotaan dengan manfaat seumur hidup. Bayangkan RWID sebagai sebuah <b class="rwid-bold">koperasi</b> di mana kami mengelola biaya pendaftaranmu untuk menyediakan akses ke berbagai fasilitas premium, layanan mentoring dan kursus untuk peningkatan skill dan <b class="rwid-bold">pendampingan dari mentor</b> sampai menembus kerja remote. Ini berlaku tidak hanya untuk kamu, tetapi juga untuk dua anggota keluarga lainnya</p>
-
-    </div>
-      <div class="mx-auto mt-16 max-w-2xl rounded-3xl ring-1 ring-gray-200 sm:mt-20 lg:mx-0 lg:flex lg:max-w-none">
-        <div class="p-8 sm:p-10 lg:flex-auto">
-          <h3 class="text-2xl font-bold tracking-tight text-gray-900">SIM Reguler</h3>
-          <p class="mt-6 text-base leading-7 text-gray-600">Untuk kamu yang bisa mengikuti jadwal yang sudah tetap dalam zoom bersama-sama anggota lainnya</p>
-          <div class="mt-10 flex items-center gap-x-4">
-            <h4 class="flex-none text-sm font-semibold leading-6 rwid-bold">Fasilitas</h4>
-            <div class="h-px flex-auto bg-gray-100"></div>
-          </div>
-          <ul role="list" class="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-gray-600 sm:grid-cols-2 sm:gap-6">
-            <li class="flex gap-x-3">
-              <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-              </svg>
-              Semua course Udemy
-            </li>
-            <li class="flex gap-x-3">
-                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                </svg>
-                Semua zoom live
-              </li>
-              <li class="flex gap-x-3">
-                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                </svg>
-                Satu course, satu mentor
-              </li>
-            <li class="flex gap-x-3">
-                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                </svg>
-                Akun premium<span class="fa fa-info-circle rwid-tight" onclick="togglePopup()"></span>
-                <!-- Pembungkus Popup -->
-                <div id="popupWrapper" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);" onclick="closePopup(event)">
-                    <!-- Popup -->
-                    <div id="popup" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; border:1px solid #ccc; padding:10px;">
-                    <ul>
-                        <li>Canva Pro</li>
-                        <li>Chat GPT Premium</li>
-                        <li>VPS</li>
-                        <li>Andromo (otw)</li>
-                    </ul>
-                    </div>
-                </div>
-  
-            </li>
-              <li class="flex gap-x-3">
-                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                </svg>
-                English speaking and fundamental
-              </li>
-              <li class="flex gap-x-3">
-                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                </svg>
-                Bisa memasukkan dua anggota keluarga
-              </li>
-              <li class="flex gap-x-3">
-                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                </svg>
-                Dukungan selamanya
-              </li>
-              <li class="flex gap-x-3">
-                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                </svg>
-                Zoom peminatan dengan Assessor
-              </li>
-            
-          </ul>
+      <h2 class="text-4xl font-bold mb-2 p-2 mt-2 tracking-tight text-gray-900 sm:text-2xl rwid-bold">Kerja dari rumah bergaji dollar?</h2>        
+      <p class="text-gray-600 text-lg  leading-8 mb-8 p-2 text-justify text-gray-600" >Pelajari course upgrade skill yang sesuai untukmu sampai kamu menembus remote work bersama kami! Berlaku juga untuk <b class="rwid-bold">2 anggota keluargamu</b> dimana tiap anggota keluarga bisa mempelajari course yang berbeda. Tanpa tambahan biaya! <b class="rwid-bold">Lifetime.</b></p>
+      {{if not .IsLoggedIn}}
+        <div id="loginButton">
+            <i class="fab fa-google"></i> Masuk dengan Google
         </div>
-        <div class="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0">
-          <div class="rounded-2xl bg-gray-50 py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
-            <div class="mx-auto max-w-xs px-8">
-              <p class="text-base font-semibold text-gray-600">Bayar sekali, untuk selamanya</p>
-              <p class="mt-6 flex items-baseline justify-center gap-x-2">
-                <span class="text-5xl font-bold tracking-tight text-gray-900">Rp. 6,5juta</span>
-              </p>
-              <a href="#" class="mt-10 block w-full rounded-md rwid-background px-3 py-2 text-center text-sm font-semibold text-white shadow-sm rwid-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Daftar</a>
-              <!-- <p class="mt-6 text-xs leading-5 text-gray-600">Invoices and receipts available for easy company reimbursement</p> -->
+      {{ else }}
+        {{ if eq .Membership ""}}
+        <div class="flex flex-wrap items-center p-4">
+        <span class="text-center bg-blue-400 hover:shadow hover:bg-danger transition duration-150 px-2 py-1 rounded text-lg text-white mx-1 my-2">
+              Pilih membershipmu sebelum berproses bersama RWID!<br/>👇👇👇
+        </span>
+      </div>
+        {{ end }}
+      {{end}}
+  </div>
+
+  <div class="bg-white py-6 sm:py-6" >
+      <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl sm:text-center">
+          <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl rwid-bold">Membership Super Intensive Mentoring</h2>
+          <p class="mt-6 text-lg leading-8 text-gray-600 text-justify">Di RWID, kamu tidak sekadar membeli kursus, namun kamu berinvestasi sekali untuk keanggotaan dengan manfaat seumur hidup. Bayangkan RWID sebagai sebuah <b class="rwid-bold">koperasi</b> di mana kami mengelola biaya pendaftaranmu untuk menyediakan akses ke berbagai fasilitas premium, layanan mentoring dan kursus untuk peningkatan skill dan <b class="rwid-bold">pendampingan dari mentor</b> sampai menembus kerja remote. Ini berlaku tidak hanya untuk kamu, tetapi juga untuk dua anggota keluarga lainnya</p>
+
+      </div>
+        <div class="mx-auto mt-16 max-w-2xl rounded-3xl ring-1 ring-gray-200 sm:mt-20 lg:mx-0 lg:flex lg:max-w-none">
+          <div class="p-8 sm:p-10 lg:flex-auto">
+            <h3 class="text-2xl font-bold tracking-tight text-gray-900">SIM Reguler</h3>
+            <p class="mt-6 text-base leading-7 text-gray-600">Untuk kamu yang bisa mengikuti jadwal yang sudah tetap dalam zoom bersama-sama anggota lainnya</p>
+            <div class="mt-10 flex items-center gap-x-4">
+              <h4 class="flex-none text-sm font-semibold leading-6 rwid-bold">Fasilitas</h4>
+              <div class="h-px flex-auto bg-gray-100"></div>
+            </div>
+            <ul role="list" class="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-gray-600 sm:grid-cols-2 sm:gap-6">
+              <li class="flex gap-x-3">
+                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+                Semua course Udemy
+              </li>
+              <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Semua zoom live
+                </li>
+                <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Satu course, satu mentor
+                </li>
+              <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Akun premium<span class="fa fa-info-circle rwid-tight" onclick="togglePopup()"></span>
+                  <!-- Pembungkus Popup -->
+                  <div id="popupWrapper" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);" onclick="closePopup(event)">
+                      <!-- Popup -->
+                      <div id="popup" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; border:1px solid #ccc; padding:10px;">
+                      <ul>
+                          <li>Canva Pro</li>
+                          <li>Chat GPT Premium</li>
+                          <li>VPS</li>
+                          <li>Andromo (otw)</li>
+                      </ul>
+                      </div>
+                  </div>
+    
+              </li>
+                <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  English speaking and fundamental
+                </li>
+                <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Bisa memasukkan dua anggota keluarga
+                </li>
+                <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Dukungan selamanya
+                </li>
+                <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Zoom peminatan dengan Assessor
+                </li>
+              
+            </ul>
+          </div>
+          <div class="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0">
+            <div class="rounded-2xl bg-gray-50 py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
+              <div class="mx-auto max-w-xs px-8">
+                <p class="text-base font-semibold text-gray-600">Bayar sekali, untuk selamanya</p>
+                <p class="mt-6 flex items-baseline justify-center gap-x-2">
+                  <span class="text-5xl font-bold tracking-tight text-gray-900">Rp. 6,5juta</span>
+                </p>
+                <a href="daftar" class="mt-10 block w-full rounded-md rwid-background px-3 py-2 text-center text-sm font-semibold text-white shadow-sm rwid-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Daftar</a>
+                <!-- <p class="mt-6 text-xs leading-5 text-gray-600">Invoices and receipts available for easy company reimbursement</p> -->
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   </div>
 
   <div class="py-6 sm:py-6" >
@@ -303,7 +166,7 @@ document.addEventListener('click', function(event) {
                     <img src="static/img/v1.jpeg"/>
                     </div>
                 </div>
-  
+
             </li>
               <li class="flex gap-x-3">
                 <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -325,7 +188,7 @@ document.addEventListener('click', function(event) {
               </div>
               
               </li>
-             
+              
               <li class="flex gap-x-3">
                 <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
@@ -349,173 +212,4 @@ document.addEventListener('click', function(event) {
       </div>
     </div>
   </div>
-
-
-<!-- Footer -->
-<footer class="bg-green-500 text-white py-6" style="background-color: #008172;">
-    <div class="container mx-auto text-center">
-        <p>&copy; 2023 Remote Worker Indonesia. All rights reserved.</p>
-    </div>
-</footer>
-<script type="module">
-    import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs';  
-    // Pastikan DOM sudah siap sebelum menginisialisasi Swiper
-    document.addEventListener('DOMContentLoaded', (event) => {
-      const swiper = new Swiper('.swiper-container', {
-        // Opsi konfigurasi
-        loop: true,
-        pagination: {
-          el: '.swiper-pagination',
-        },
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
-        autoplay: {
-          delay: 2500,
-          disableOnInteraction: false,
-        },
-      });
-    });
-</script>
-  
-<script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-  
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    // TODO: apa bener di halaman HTML ini ya? Apa ga lebih baik diluar? Bisa gak nanti ini dipakai orang lain?
-    const firebaseConfig = {
-      apiKey: "AIzaSyDpEElh_spfDY6XWCTFPQorbcfVkKtap6c",
-      authDomain: "golangbackend-2cc64.firebaseapp.com",
-      projectId: "golangbackend-2cc64",
-      storageBucket: "golangbackend-2cc64.appspot.com",
-      messagingSenderId: "657570454391",
-      appId: "1:657570454391:web:231f399995a309c2691f72",
-      measurementId: "G-1MXVQDR0RL"
-    };
-  
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-
-    // Mendapatkan instance Auth
-    const auth = getAuth();
-  
-    // Menangani tindakan klik pada tombol login
-    // jika berhasil, server harus diberitahu kalau user ini berhasil login
-    // caranya adalah dengan mempersiapkan variable session yang berisi
-    // isLoggedIn == true
-    document.addEventListener("DOMContentLoaded", function() {
-        const loginButton = document.getElementById('loginButton');
-        loginButton.addEventListener('click', () => {
-            const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    // Handle hasil login berhasil di sini (misalnya, redirect atau menampilkan info pengguna)
-                    // console.log('Login berhasil', result.user);
-                    // Dapatkan token ID
-                    // const token = result.user.getIdToken();
-                    console.log(result.user);
-                    result.user.getIdToken().then(token => {
-                        console.log('token', JSON.stringify({ token: token }));
-                        fetch("/verify-token", { //TOASK: kenapa harus diverify? GPT: Best practice keamanan
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ 
-                              token: token, 
-                              name: result.user.displayName,
-                              email: result.user.email,
-                              photoURL: result.user.photoURL,
-                            }),
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === "success") {
-                                // Redirect ke /dashboard jika status adalah success
-                                window.location.href = "/";
-                            } else {
-                                // Handle kasus ketika status bukan success
-                                console.error('Login tidak berhasil atau status bukan success');
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('Error:', error); //TODO: handler lebih baik
-                        });
-
-                    }).catch(error => {
-                        console.error('Error getting token:', error); //TODO: handler lebih baik
-                    });
-                })
-                .catch((error) => {
-                    // Handle error login di sini (misalnya, menampilkan pesan kesalahan)
-                    console.error('Login gagal', error);
-                });
-        });
-    });
-  </script>
-
-<script>//TODO pisahkan ke file JS tersendiri
-
-function togglePopup() {
-  const popupWrapper = document.getElementById("popupWrapper");
-  popupWrapper.style.display = popupWrapper.style.display === "none" ? "block" : "none";
-}
-
-function closePopup(event) {
-  // Cek jika yang diklik adalah pembungkus, bukan popup itu sendiri
-  if (event.target.id === "popupWrapper") {
-    togglePopup(); // atau langsung set display:none; tergantung implementasi
-  }
-}
-
-function togglePopup2() {
-  const popupWrapper = document.getElementById("popupWrapper2");
-  popupWrapper.style.display = popupWrapper.style.display === "none" ? "block" : "none";
-}
-
-function closePopup2(event) {
-  // Cek jika yang diklik adalah pembungkus, bukan popup itu sendiri
-  if (event.target.id === "popupWrapper2") {
-    togglePopup2(); // atau langsung set display:none; tergantung implementasi
-  }
-}
-
-function togglePopup3() {
-  const popupWrapper = document.getElementById("popupWrapper3");
-  popupWrapper.style.display = popupWrapper.style.display === "none" ? "block" : "none";
-}
-
-function closePopup3(event) {
-  // Cek jika yang diklik adalah pembungkus, bukan popup itu sendiri
-  if (event.target.id === "popupWrapper3") {
-    togglePopup3(); // atau langsung set display:none; tergantung implementasi
-  }
-}
-
-
-function togglePopup4() {
-  const popupWrapper = document.getElementById("popupWrapper4");
-  popupWrapper.style.display = popupWrapper.style.display === "none" ? "block" : "none";
-}
-
-function closePopup4(event) {
-  // Cek jika yang diklik adalah pembungkus, bukan popup itu sendiri
-  if (event.target.id === "popupWrapper4") {
-    togglePopup4(); // atau langsung set display:none; tergantung implementasi
-  }
-}
-  </script>
-
-
-  
-</body>
-</html>
+{{ end }}

@@ -70,7 +70,8 @@ func main() {
 		precompileTemplate()
 	}	
 	r := mux.NewRouter()
-
+	
+	r.Use(sessionMiddleware)
 	// Handle root / default route
 	r.HandleFunc("/", HomeHandler)
 	r.HandleFunc("/about", AboutHandler)
@@ -81,6 +82,7 @@ func main() {
 	r.HandleFunc("/privacy-policy", PrivacyHandler)
 	r.HandleFunc("/tos", TosHandler)
 	r.HandleFunc("/verify-token", VerifyTokenHandler).Methods("POST")
+	r.HandleFunc("/daftar", DaftarHandler)
 
 	if devMode{
 		r.HandleFunc("/del", clearSessionHandler)
@@ -232,80 +234,99 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
+func SetSessionValue(session *sessions.Session, key string, defaultValue interface{}) interface{} {
+    if val, ok := session.Values[key]; ok {
+        return val
+    } else {
+        session.Values[key] = defaultValue
+        return defaultValue
+    }
+}
+
+// TODO: Buat middleware ini mempersiapkan semua variable session yang PASTI dipakai 
+// di semua route. Nanti di tiap route dia akan mengekstrak data session yang sesuai
+func sessionMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // Setup session di sini
+        session, err := store.Get(r, "session-name")
+        if err != nil {
+            http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
+            return
+        }
+
+		isLoggedIn := false // Default false sampai dibuktikan sebaliknya
+		if user_id, ok := session.Values["user_id"]; ok {
+			isLoggedIn = true
+		}else{
+			session.Values["user_id"] = user_id
+			session.Values["isLoggedIn"] = true
+		}
+
+		// var name, email, photo, membership string
+		// if val, ok := session.Values["user_name"].(string); ok {
+		// 	name = val
+		// }
+		
+		// // Cek dan assign nilai session untuk Email, dengan penanganan jika nil atau bukan string
+		// if val, ok := session.Values["user_email"].(string); ok {
+		// 	email = val
+		// }
+		
+		// // Cek dan assign nilai session untuk Photo, dengan penanganan jika nil atau bukan string
+		// if val, ok := session.Values["user_photo"].(string); ok {
+		// 	photo = val
+		// }
+	
+		// // Cek dan assign nilai session untuk Photo, dengan penanganan jika nil atau bukan string
+		// if val, ok := session.Values["user_membersip"].(string); ok {
+		// 	membership = val
+		// }		
+
+		// Contoh penggunaan fungsi SetSessionValue
+		name := SetSessionValue(session, "user_name", "Default Name").(string)
+		email := SetSessionValue(session, "user_email", "email@default.com").(string)
+		photo := SetSessionValue(session, "user_photo", "defaultPhotoUrl").(string)
+		membership := SetSessionValue(session, "user_membership", "none").(string)
+
+		// Jangan lupa untuk menyimpan perubahan session setelah melakukan penyetelan
+		err = session.Save(r, w)
+		if err != nil {
+			// Handle error saat menyimpan session
+			log.Printf("Error saving session: %v", err)
+		}
+
+
+        // Simpan session ke context request agar bisa diakses di handler
+        ctx := context.WithValue(r.Context(), "session", session)
+        next.ServeHTTP(w, r.WithContext(ctx))
+    })
+}
+
 // Halaman utama aplikasi
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
-	// Ubah dari sekedar serving static file ke bentuk templating engine
-	//http.ServeFile(w, r, "static/index.html")
-
-	session, err := store.Get(r, "session-name")
-    if err != nil {
-        http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
-        return
-    }
-
-	isLoggedIn := false // Default false sampai dibuktikan sebaliknya
-    if _, ok := session.Values["user_id"]; ok {
-        isLoggedIn = true
-    }
-	var name, email, photo, membership string
-	if val, ok := session.Values["user_name"].(string); ok {
-		name = val
-	}
-	
-	// Cek dan assign nilai session untuk Email, dengan penanganan jika nil atau bukan string
-	if val, ok := session.Values["user_email"].(string); ok {
-		email = val
-	}
-	
-	// Cek dan assign nilai session untuk Photo, dengan penanganan jika nil atau bukan string
-	if val, ok := session.Values["user_photo"].(string); ok {
-		photo = val
-	}
-
-	// Cek dan assign nilai session untuk Photo, dengan penanganan jika nil atau bukan string
-	if val, ok := session.Values["user_membership"].(string); ok {
-		membership = val
-	}
-	data := struct {
-        IsLoggedIn bool
-		DevMode bool
-		TimeStamp time.Time
-		Name string 
-		Email string 
-		Photo string
-		Membership string
-    }{
-        IsLoggedIn: isLoggedIn,
-		DevMode: devMode,
-		TimeStamp: time.Now(),
-		Name: name,
-		Email: email,
-		Photo: photo,
-		Membership: membership,
-	}
-
 	if devMode {
-		tmpl, err := template.ParseFiles("static/index.html")
+		tmpl, err := template.ParseFiles("static/base.html", "static/index.html")
         if err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
         }
-		err = tmpl.Execute(w, data)
+		err = tmpl.ExecuteTemplate(w, "base", data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
 	}else{
-		err = templates.ExecuteTemplate(w, "index.html", data)
+		log.Println("Production code")
+		err = templates.ExecuteTemplate(w, "base", data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-	}
+	}	
+}
 
-
-
-	
+func DaftarHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Daftar"))
 }
 
 func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
