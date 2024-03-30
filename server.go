@@ -15,7 +15,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"github.com/gorilla/sessions"
 
-	"firebase.google.com/go"
+	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -39,27 +39,25 @@ const (
 )
 
 func clearSessionHandler(w http.ResponseWriter, r *http.Request) {
-    // Mendapatkan session
-    session, err := store.Get(r, "session-name")
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	// Mendapatkan session
+	session, err := store.Get(r, "session-name")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    // Mengatur MaxAge menjadi -1 memaksa penghapusan cookie
-    session.Options.MaxAge = -1
+	// Mengatur MaxAge menjadi -1 memaksa penghapusan cookie
+	session.Options.MaxAge = -1
 
-    // Menyimpan perubahan untuk menerapkan penghapusan
-    err = session.Save(r, w)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	// Menyimpan perubahan untuk menerapkan penghapusan
+	err = session.Save(r, w)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    // Redirect atau memberikan response lain setelah "membersihkan" session
+	// Redirect atau memberikan response lain setelah "membersihkan" session
 }
-
-
 
 // Fungsi yang diakses pertama kali oleh go
 func main() {
@@ -68,9 +66,9 @@ func main() {
 	initFirebaseAdmin()
 	if !devMode {
 		precompileTemplate()
-	}	
+	}
 	r := mux.NewRouter()
-	
+
 	r.Use(sessionMiddleware)
 	// Handle root / default route
 	r.HandleFunc("/", HomeHandler)
@@ -84,7 +82,7 @@ func main() {
 	r.HandleFunc("/verify-token", VerifyTokenHandler).Methods("POST")
 	r.HandleFunc("/daftar", DaftarHandler)
 
-	if devMode{
+	if devMode {
 		r.HandleFunc("/del", clearSessionHandler)
 	}
 
@@ -101,38 +99,37 @@ func main() {
 
 // TODO: jadikan function ini bisa dipakai banyak variable session
 func createSession(w http.ResponseWriter, r *http.Request, kv ...interface{}) {
-    // Membuat atau mengambil session
-    session, err := store.Get(r, "session-name")
-    if err != nil {
-        http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
-        return
-    }
+	// Membuat atau mengambil session
+	session, err := store.Get(r, "session-name")
+	if err != nil {
+		http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
+		return
+	}
 
-    // Memastikan jumlah argumen kv adalah genap (key-value pairs)
-    if len(kv)%2 != 0 {
-        log.Println("createSession error: Argumen harus berpasangan (key-value)")
-        return
-    }
+	// Memastikan jumlah argumen kv adalah genap (key-value pairs)
+	if len(kv)%2 != 0 {
+		log.Println("createSession error: Argumen harus berpasangan (key-value)")
+		return
+	}
 
-    // Menyimpan pasangan key-value ke dalam session
-    for i := 0; i < len(kv); i += 2 {
-        key, ok := kv[i].(string)
-        if !ok {
-            log.Println("createSession error: Key harus bertipe string")
-            return
-        }
-        session.Values[key] = kv[i+1]
+	// Menyimpan pasangan key-value ke dalam session
+	for i := 0; i < len(kv); i += 2 {
+		key, ok := kv[i].(string)
+		if !ok {
+			log.Println("createSession error: Key harus bertipe string")
+			return
+		}
+		session.Values[key] = kv[i+1]
 		log.Printf("Key: %s, Value: %v\n", key, kv[i+1])
-    }
+	}
 
-    // Simpan perubahan session
-    err = session.Save(r, w)
-    if err != nil {
-        // Handle error
-        log.Printf("createSession error: %v\n", err)
-    }
+	// Simpan perubahan session
+	err = session.Save(r, w)
+	if err != nil {
+		// Handle error
+		log.Printf("createSession error: %v\n", err)
+	}
 }
-
 
 func precompileTemplate() {
 	// Menggunakan template.ParseGlob untuk memuat semua file template
@@ -160,7 +157,7 @@ func initFirebaseAdmin() {
 		log.Fatalf("error creating Auth client: %v\n", err)
 		return
 	}
-	
+
 	FirestoreClient, err = app.Firestore(ctx)
 	if err != nil {
 		log.Fatalf("error creating Firestore client: %v\n", err)
@@ -234,59 +231,40 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
+// NOTE: berguna untuk membuat ringkas kode yang mengambil nilai dan atau menset nilai dari/ke session
 func SetSessionValue(session *sessions.Session, key string, defaultValue interface{}) interface{} {
-    if val, ok := session.Values[key]; ok {
-        return val
-    } else {
-        session.Values[key] = defaultValue
-        return defaultValue
-    }
+	if val, ok := session.Values[key]; ok {
+		return val
+	} else {
+		session.Values[key] = defaultValue
+		return defaultValue
+	}
 }
 
-// TODO: Buat middleware ini mempersiapkan semua variable session yang PASTI dipakai 
+func GetSessionValue(session *sessions.Session, key string) interface{} {
+	if val, ok := session.Values[key]; ok {
+		return val
+	}
+	return nil
+}
+
+// TODO: Buat middleware ini mempersiapkan semua variable session yang PASTI dipakai
 // di semua route. Nanti di tiap route dia akan mengekstrak data session yang sesuai
 func sessionMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        // Setup session di sini
-        session, err := store.Get(r, "session-name")
-        if err != nil {
-            http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
-            return
-        }
-
-		isLoggedIn := false // Default false sampai dibuktikan sebaliknya
-		if user_id, ok := session.Values["user_id"]; ok {
-			isLoggedIn = true
-		}else{
-			session.Values["user_id"] = user_id
-			session.Values["isLoggedIn"] = true
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Setup session di sini
+		session, err := store.Get(r, "session-name")
+		if err != nil {
+			http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
+			return
 		}
 
-		// var name, email, photo, membership string
-		// if val, ok := session.Values["user_name"].(string); ok {
-		// 	name = val
-		// }
-		
-		// // Cek dan assign nilai session untuk Email, dengan penanganan jika nil atau bukan string
-		// if val, ok := session.Values["user_email"].(string); ok {
-		// 	email = val
-		// }
-		
-		// // Cek dan assign nilai session untuk Photo, dengan penanganan jika nil atau bukan string
-		// if val, ok := session.Values["user_photo"].(string); ok {
-		// 	photo = val
-		// }
-	
-		// // Cek dan assign nilai session untuk Photo, dengan penanganan jika nil atau bukan string
-		// if val, ok := session.Values["user_membersip"].(string); ok {
-		// 	membership = val
-		// }		
-
-		// Contoh penggunaan fungsi SetSessionValue
-		name := SetSessionValue(session, "user_name", "Default Name").(string)
-		email := SetSessionValue(session, "user_email", "email@default.com").(string)
-		photo := SetSessionValue(session, "user_photo", "defaultPhotoUrl").(string)
-		membership := SetSessionValue(session, "user_membership", "none").(string)
+		//TODO: buat helper yang mengambil dan atau menset nilai default suatu nilai disession
+		_ = SetSessionValue(session, "isLoggedIn", false)
+		_ = SetSessionValue(session, "user_name", "Default Name").(string)
+		_ = SetSessionValue(session, "user_email", "email@default.com").(string)
+		_ = SetSessionValue(session, "user_photo", "static/img/v1.jpeg").(string)
+		_ = SetSessionValue(session, "user_membership", "").(string)
 
 		// Jangan lupa untuk menyimpan perubahan session setelah melakukan penyetelan
 		err = session.Save(r, w)
@@ -295,34 +273,61 @@ func sessionMiddleware(next http.Handler) http.Handler {
 			log.Printf("Error saving session: %v", err)
 		}
 
-
-        // Simpan session ke context request agar bisa diakses di handler
-        ctx := context.WithValue(r.Context(), "session", session)
-        next.ServeHTTP(w, r.WithContext(ctx))
-    })
+		// Simpan session ke context request agar bisa diakses di handler
+		ctx := context.WithValue(r.Context(), "session", session)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
 
 // Halaman utama aplikasi
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
+	//NOTE: Dulu data disiapkan disini sebagai variable local di function ini
+	//Sekarang data diambil dari session, dimana session disiapkan di sessionMiddleWare
+	//NOTE: lanjutkan sessionMiddleWare agar data bisa disiapkan dengan variable dari
+	//session
+	session, err := store.Get(r, "session-name")
+	if err != nil {
+		http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		IsLoggedIn bool
+		DevMode    bool
+		Name       string
+		Email      string
+		Photo      string
+		Membership string
+		TimeStamp  time.Time
+	}{
+		IsLoggedIn: GetSessionValue(session, "isLoggedIn").(bool),
+		DevMode:    devMode,
+		Name:       GetSessionValue(session, "user_name").(string),
+		Email:      GetSessionValue(session, "user_email").(string),
+		Photo:      GetSessionValue(session, "user_photo").(string),
+		Membership: GetSessionValue(session, "user_membership").(string),
+		TimeStamp:  time.Now(),
+	}
+
 	if devMode {
 		tmpl, err := template.ParseFiles("static/base.html", "static/index.html")
-        if err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
-        }
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		err = tmpl.ExecuteTemplate(w, "base", data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
-	}else{
+	} else {
 		log.Println("Production code")
 		err = templates.ExecuteTemplate(w, "base", data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-	}	
+	}
 }
 
 func DaftarHandler(w http.ResponseWriter, r *http.Request) {
@@ -330,30 +335,29 @@ func DaftarHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
-    // Struct untuk mem-parsing request body
-    var requestBody struct {
-        Token string `json:"token"`
-		Name string `json:"name"`
-		Email string `json:"email"`
+	// Struct untuk mem-parsing request body
+	var requestBody struct {
+		Token    string `json:"token"`
+		Name     string `json:"name"`
+		Email    string `json:"email"`
 		PhotoURL string `json:"photoURL"`
-    }
-    if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
-        http.Error(w, "Bad request", http.StatusBadRequest)
-        return
-    }
+	}
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
 	ctx := r.Context()
-    // Verifikasi ID token
-    token, err := FirebaseAuthClient.VerifyIDToken(ctx, requestBody.Token)
-    if err != nil {
-        http.Error(w, "Invalid ID token", http.StatusUnauthorized) //TODO: jika ini terjadi, suruh login ulang.
-        return
-    }
+	// Verifikasi ID token
+	token, err := FirebaseAuthClient.VerifyIDToken(ctx, requestBody.Token)
+	if err != nil {
+		http.Error(w, "Invalid ID token", http.StatusUnauthorized) //TODO: jika ini terjadi, suruh login ulang.
+		return
+	}
 
-    // Token valid, atur session untuk user
-	// fmt.Println(requestBody.Name)	
-	// fmt.Println(requestBody.Email)	
-	// fmt.Println(requestBody.PhotoURL)	
-
+	// Token valid, atur session untuk user
+	// fmt.Println(requestBody.Name)
+	// fmt.Println(requestBody.Email)
+	// fmt.Println(requestBody.PhotoURL)
 
 	// AMBIL DATA USER YANG LEBIH LENGKAP DARI FIRESOTRE
 	ctx = context.Background()
@@ -367,7 +371,7 @@ func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
 			userData = map[string]interface{}{
 				"membership": "",
 			}
-			
+
 			_, err = docRef.Set(ctx, userData)
 			if err != nil {
 				// Handle error saat insert data
@@ -383,7 +387,7 @@ func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
 	} else if docSnapshot.Exists() {
 		log.Println("User sudah ada kan?")
 		userData = docSnapshot.Data()
-		
+
 	}
 
 	membershipValue, ok := userData["membership"].(string)
@@ -393,7 +397,7 @@ func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Membership tidak ditemukan atau bukan tipe string")
 	}
 
-	createSession(w, r, 
+	createSession(w, r,
 		"user_id", token.UID,
 		"user_name", requestBody.Name,
 		"user_email", requestBody.Email,
@@ -401,29 +405,30 @@ func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
 		"user_membership", membershipValue,
 	)
 
-
-    // Kirim response sukses ke client
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(map[string]string{"status": "success"})
+	// Kirim response sukses ke client
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "success"})
 }
 
 // Fungsi ini sekedar menunjukkan bagaimana cara membaca parameter dari request
 // Contoh: http://localhost:8080/search?a=2&b=3&q=eko akan menghasilkan output:
 // Hasil pencarian untuk: eko. Penjumlahan: 2+3=5
 // Perhatikan cara mengakses nilai q, a dan b
-// Go bisa mendeklarasikan dan sekaligus menginisialisasi 
-//    sA := vars.Get("a")
+// Go bisa mendeklarasikan dan sekaligus menginisialisasi
+//
+//	sA := vars.Get("a")
+//
 // adalah deklarasi sekaligus inisialisasi
 // Bisa seperti ini:
-//    var sA string
-//    sA = vars.Get("a")
+//
+//	var sA string
+//	sA = vars.Get("a")
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	vars := r.URL.Query()
 	query := vars.Get("q")
 
 	sA := vars.Get("a")
 	sB := vars.Get("b")
-
 
 	a, errA := strconv.Atoi(sA)
 	b, errB := strconv.Atoi(sB)
