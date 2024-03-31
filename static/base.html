@@ -23,14 +23,11 @@
 <!-- Navigasi Utama -->
 <nav class="p-1 text-white rwid-background fixed top-0 left-0 z-50 w-full">
   <div class="container mx-auto flex justify-between items-center">
-      Remote Worker Indonesia
-        <div>
-        </div>
-      <div id="menuItems" class="hidden md:block">
-          <a href="#" class="ml-4">Home</a>
-          <a href="#" class="ml-4">About</a>
-          <a href="#" class="ml-4">Contact</a>
-      </div>
+      <!-- TODO tambahkan logo RWID di depan -->
+      <span class="flex items-center mx-auto"><img class="w-8 h-8 mr-2" src="static/img/logo.png"/>Remote Worker Indonesia</span>
+        <!--     <div id="menuItems" class="hidden md:block">
+          <a href="/" class="ml-4">Home</a>
+        </div>-->
       <div id="mobileMenu" class="md:hidden relative">
           <button id="menuButton" class="text-white hover:text-gray-200 focus:outline-none flex items-center">
             {{ if not .IsLoggedIn}}

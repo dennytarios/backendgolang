@@ -1,3 +1,221 @@
 {{ define "content" }}
-<h1>Daftar RWID</h1>
+<div class="flex flex-col items-center justify-center h-auto">
+      <h2 class="text-4xl font-bold mb-2 p-2 mt-2 tracking-tight text-gray-900
+                  sm:text-2xl rwid-bold">Tuntaskan risetmu sebelum mendaftar ke
+                  RWID
+      </h2>        
+      <p class="text-gray-600 text-lg  leading-8 mb-8 p-2 text-justify
+      text-gray-600">
+      Googling saja dengan keyword <a class="rwid-bold" href="https://www.google.com/search?q=bootcamp+remote+work&oq=bootca&gs_lcrp=EgZjaHJvbWUqDggAEEUYJxg7GIAEGIoFMg4IABBFGCcYOxiABBiKBTIGCAEQRRg5MgcIAhAAGIAEMgcIAxAAGIAEMgcIBBAAGIAEMgYIBRBFGEEyBggGEEUYPTIGCAcQRRhB0gEIMTAyMmowajeoAgCwAgA&sourceid=chrome&ie=UTF-8" target="_blank">bootcamp remote
+          work</a>. Pelajari semua
+      institusi pendidikan baik formal atau informal di Indonesia. Riset cara
+      belajarnya, kelulusannya, biayanya, dukungannya dan lain sebagainya. Jika
+      kamu sudah menyelesaikan risetmu dan akhirnya memilih RWID: monggo.
+      Berproses bersama.
+      </p>
+      {{if not .IsLoggedIn}}
+        <div id="loginButton">
+            <i class="fab fa-google"></i> Masuk dengan Google sebelum mendaftar
+        </div>
+      {{ else }}
+        {{ if eq .Membership ""}}
+          <div class="bg-white py-6 sm:py-6" >
+      <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl sm:text-center">
+          <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl rwid-bold">Membership Super Intensive Mentoring</h2>
+          <p class="mt-6 text-lg leading-8 text-gray-600 text-justify">Di RWID, kamu tidak sekadar membeli kursus, namun kamu berinvestasi sekali untuk keanggotaan dengan manfaat seumur hidup. Bayangkan RWID sebagai sebuah <b class="rwid-bold">koperasi</b> di mana kami mengelola biaya pendaftaranmu untuk menyediakan akses ke berbagai fasilitas premium, layanan mentoring dan kursus untuk peningkatan skill dan <b class="rwid-bold">pendampingan dari mentor</b> sampai menembus kerja remote. Ini berlaku tidak hanya untuk kamu, tetapi juga untuk dua anggota keluarga lainnya</p>
+
+      </div>
+        <div class="mx-auto mt-16 max-w-2xl rounded-3xl ring-1 ring-gray-200 sm:mt-20 lg:mx-0 lg:flex lg:max-w-none">
+          <div class="p-8 sm:p-10 lg:flex-auto">
+            <h3 class="text-2xl font-bold tracking-tight text-gray-900">SIM Reguler</h3>
+            <p class="mt-6 text-base leading-7 text-gray-600">Untuk kamu yang bisa mengikuti jadwal yang sudah tetap dalam zoom bersama-sama anggota lainnya</p>
+            <div class="mt-10 flex items-center gap-x-4">
+              <h4 class="flex-none text-sm font-semibold leading-6 rwid-bold">Fasilitas</h4>
+              <div class="h-px flex-auto bg-gray-100"></div>
+            </div>
+            <ul role="list" class="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-gray-600 sm:grid-cols-2 sm:gap-6">
+              <li class="flex gap-x-3">
+                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+                Semua course Udemy
+              </li>
+              <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Semua zoom live
+                </li>
+                <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Satu course, satu mentor
+                </li>
+              <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Akun premium<span class="fa fa-info-circle rwid-tight" onclick="togglePopup()"></span>
+                  <!-- Pembungkus Popup -->
+                  <div id="popupWrapper" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);" onclick="closePopup(event)">
+                      <!-- Popup -->
+                      <div id="popup" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; border:1px solid #ccc; padding:10px;">
+                      <ul>
+                          <li>Canva Pro</li>
+                          <li>Chat GPT Premium</li>
+                          <li>VPS</li>
+                          <li>Andromo (otw)</li>
+                      </ul>
+                      </div>
+                  </div>
+    
+              </li>
+                <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  English speaking and fundamental
+                </li>
+                <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Bisa memasukkan dua anggota keluarga
+                </li>
+                <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Dukungan selamanya
+                </li>
+                <li class="flex gap-x-3">
+                  <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                  </svg>
+                  Zoom peminatan dengan Assessor
+                </li>
+              
+            </ul>
+          </div>
+          <div class="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0">
+            <div class="rounded-2xl bg-gray-50 py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
+              <div class="mx-auto max-w-xs px-8">
+                <p class="text-base font-semibold text-gray-600">Bayar sekali, untuk selamanya</p>
+                <p class="mt-6 flex items-baseline justify-center gap-x-2">
+                  <span class="text-5xl font-bold tracking-tight text-gray-900">Rp. 6,5juta</span>
+                </p>
+                <a href="daftar" class="mt-10 block w-full rounded-md rwid-background px-3 py-2 text-center text-sm font-semibold text-white shadow-sm rwid-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Daftar</a>
+                <!-- <p class="mt-6 text-xs leading-5 text-gray-600">Invoices and receipts available for easy company reimbursement</p> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <div class="py-6 sm:py-6" >
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl rounded-3xl ring-1 ring-gray-200 lg:mx-0 lg:flex lg:max-w-none relative">
+          <div class="absolute top-0 right-0 py-1 px-3 bg-yellow-500 text-white font-semibold rounded-bl-lg rounded-tr-lg">Recommended</div>
+          
+        <div class="p-8 sm:p-10 lg:flex-auto">
+          <div class="flex items-center space-x-2 mb-4">
+            <h3 class="text-2xl font-bold tracking-tight text-gray-900">SIM VIP</h3>
+          </div>
+          
+          <p class="mt-6 text-base leading-7 text-gray-600">Semua fasilitas SIM Reguler, dengan tambahan fasilitas premium khusus untukmu</p>
+          <div class="mt-10 flex items-center gap-x-4">
+            <h4 class="flex-none text-sm font-semibold leading-6 rwid-bold">Fasilitas</h4>
+            <div class="h-px flex-auto bg-gray-100"></div>
+          </div>
+          <ul role="list" class="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-gray-600 sm:grid-cols-2 sm:gap-6">
+            <li class="flex gap-x-3">
+              <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              </svg>
+              Satu mentor khusus untukmu
+            </li>
+            <li class="flex gap-x-3">
+                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+                Jadwal bisa disesuaikan
+              </li>
+              <li class="flex gap-x-3">
+                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+                Kelas offline 24x pertemuan<span class="fa fa-info-circle rwid-tight"  onclick="togglePopup4()"></span>
+                <div id="popupWrapper4" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);" onclick="closePopup4(event)">
+                  <!-- Popup -->
+                  <div id="popup4" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 10px; width: 90%; max-width: 600px;">
+                    <p class="text-gray-600 mb-8 p-2 text-gray-600" >Dijalankan selama 2 bulan, kelas akan dimulai bersama-sama satu batch untuk materi fundamental sampai membangun portofolio pertama dan hunting job. Dilakukan di <a class="rwid-bold" target="_blank" href="https://maps.app.goo.gl/xe1rkVzkx5W4AxP96">Kantor Pusat RWID</a></p>
+                  </div>
+              </div>
+              </li>
+      
+            <li class="flex gap-x-3">
+                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+                Intensive 40 hari di Villa<span class="fa fa-info-circle rwid-tight"  onclick="togglePopup2()"></span>
+                <!-- Pembungkus Popup -->
+                <div id="popupWrapper2" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);" onclick="closePopup2(event)">
+                    <!-- Popup -->
+                    <div id="popup2" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; border:1px solid #ccc; padding:10px;">
+                    <img src="static/img/v1.jpeg"/>
+                    </div>
+                </div>
+
+            </li>
+              <li class="flex gap-x-3">
+                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+                Membangun startup bersama mentor
+              </li>
+              <li class="flex gap-x-3">
+                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+                Biaya dikembalikan 100%<span class="fa fa-info-circle rwid-tight"  onclick="togglePopup3()"></span>
+                <!-- Pembungkus Popup -->
+                <div id="popupWrapper3" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);" onclick="closePopup3(event)">
+                  <!-- Popup -->
+                  <div id="popup3" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 10px; width: 90%; max-width: 600px;">
+                    <p class="text-gray-600 mb-8 p-2 text-gray-600" >Biaya pendaftaran tentunya bisa dikembalikan jika DAN hanya jika startup yang dikembangkan berprofit. Ini bukan investasi dan juga bukan hutang, namun hibah/pemberian. Jangan tuntut pengembaliannya jika startup tidak berprofit. Saya tulis secara mendetail <a class="rwid-bold" href="https://kumparan.com/eko-suprapto-wibowo/dear-kampus-tolong-kembalikan-biaya-pendidikan-kami-secara-utuh-22DLpZcGpT9" target="_blank" style="">di Kumparan</a>. Mindset, "Mana ada kampus/bootcamp yang repot-repot mengembalikan biaya pendaftaran kalau kamu sudah ikut kursusnya?". Gunakan mindset biaya kembali dalam 3-4 tahun. Anggap masuk S1 UGM, lulus, dan saat wisuda biaya kuliahmu dikembalikan.</p>
+                  </div>
+              </div>
+              
+              </li>
+              
+              <li class="flex gap-x-3">
+                <svg class="h-6 w-5 flex-none rwid-bold" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                </svg>
+                Zoom onboarding bersama CEO
+              </li>
+          </ul>
+        </div>
+        <div class="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0">
+          <div class="rounded-2xl bg-gray-50 py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
+            <div class="mx-auto max-w-xs px-8">
+              <p class="text-base font-semibold text-gray-600">Biaya dikembalikan 100% secara bertahap melalui 10% revenue startup yang dikembangkan bersama mentor</p>
+              <p class="mt-6 flex items-baseline justify-center gap-x-2">
+                <span class="text-5xl font-bold tracking-tight text-gray-900">Rp. 25juta</span>
+              </p>
+              <a href="#" class="mt-10 block w-full rounded-md rwid-background px-3 py-2 text-center text-sm font-semibold text-white shadow-sm rwid-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Daftar</a>
+              <!-- <p class="mt-6 text-xs leading-5 text-gray-600">Invoices and receipts available for easy company reimbursement</p> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+        {{ end }}
+      {{end}}
+  </div>
 {{ end }}

@@ -316,7 +316,6 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		TimeStamp:  time.Now(),
 	}
 
-	log.Println(devMode)
 	if devMode {
 		tmpl, err := template.ParseFiles("static/base.html", "static/index.html")
 		if err != nil {
@@ -337,6 +336,27 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+NOTE Di halaman ini peserta bisa melakukan pembayaran untuk join membership.
+Peserta memilih jenis membership dari drop down.
+Kemudian tampilan akan menyesuaikan berdasarkan dropdown itu tadi.
+Untuk payment gateway, akan dilanjutkan di course part-2 dari course ini.
+Untuk saat ini, sekedar upload bukti transaksi ke rek BCA/QRIS.
+Jika memilih QRIS maka QRcode akan muncul dan bisa disave / discan
+Field yang akan disubmit pada saat pendaftaran adalah:
+- Nama diambil dari gmail, namun bisa diedit.
+- Domisili mungkin sekedar Propinsi.
+- Kesibukan saat ini (Pelajar/Mahasiswa/PNS)
+- Skill di bidang IT? (Checkboxes)
+- Jika ga skill, muncul link ke video materi ttg switching careers DAN juga warningnya
+- TTD digital ke PDF hak dan kewajiban.
+
+CHECKBOXES:
+- tentang kesadaran join RWID dengan catatan-catatan bukan jalur cepat menjadi kaya
+- tidak menjamin mendapat gaji ribuan dollar, namun disupport LIFETIME belajar sampai menembus
+- keberhasilan akan kembali ke komitmen dan disiplin belajar perhari
+- Total belajar 300-400jam menembus job
+*/
 func DaftarHandler(w http.ResponseWriter, r *http.Request) {
 	session, err := store.Get(r, "session-name")
 	if err != nil {

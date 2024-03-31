@@ -3,20 +3,7 @@
 <div class="flex flex-col items-center justify-center h-auto">
       <h2 class="text-4xl font-bold mb-2 p-2 mt-2 tracking-tight text-gray-900 sm:text-2xl rwid-bold">Kerja dari rumah bergaji dollar?</h2>        
       <p class="text-gray-600 text-lg  leading-8 mb-8 p-2 text-justify text-gray-600" >Pelajari course upgrade skill yang sesuai untukmu sampai kamu menembus remote work bersama kami! Berlaku juga untuk <b class="rwid-bold">2 anggota keluargamu</b> dimana tiap anggota keluarga bisa mempelajari course yang berbeda. Tanpa tambahan biaya! <b class="rwid-bold">Lifetime.</b></p>
-      {{if not .IsLoggedIn}}
-        <div id="loginButton">
-            <i class="fab fa-google"></i> Masuk dengan Google
-        </div>
-      {{ else }}
-        {{ if eq .Membership ""}}
-        <div class="flex flex-wrap items-center p-4">
-        <span class="text-center bg-blue-400 hover:shadow hover:bg-danger transition duration-150 px-2 py-1 rounded text-lg text-white mx-1 my-2">
-              Pilih membershipmu sebelum berproses bersama RWID!<br/>👇👇👇
-        </span>
-      </div>
-        {{ end }}
-      {{end}}
-  </div>
+    </div>
 
   <div class="bg-white py-6 sm:py-6" >
       <div class="mx-auto max-w-7xl px-6 lg:px-8">
