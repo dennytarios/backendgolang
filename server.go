@@ -134,6 +134,12 @@ func createSession(w http.ResponseWriter, r *http.Request, kv ...interface{}) {
 func precompileTemplate() {
 	// Menggunakan template.ParseGlob untuk memuat semua file template
 	templates = template.Must(template.ParseGlob("static/*.html"))
+	templateNames := templates.Templates()
+	fmt.Println("Nama-nama template yang terdaftar:")
+	for _, t := range templateNames {
+		fmt.Println(t.Name())
+	}
+
 }
 
 var FirebaseAuthClient *auth.Client
@@ -310,20 +316,21 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		TimeStamp:  time.Now(),
 	}
 
+	log.Println(devMode)
 	if devMode {
 		tmpl, err := template.ParseFiles("static/base.html", "static/index.html")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		err = tmpl.ExecuteTemplate(w, "base", data)
+		err = tmpl.ExecuteTemplate(w, "base.html", data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
 	} else {
-		log.Println("Production code")
-		err = templates.ExecuteTemplate(w, "base", data)
+		log.Println("Production code /")
+		err = templates.ExecuteTemplate(w, "base.html", data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -331,7 +338,49 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DaftarHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Daftar"))
+	session, err := store.Get(r, "session-name")
+	if err != nil {
+		http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		IsLoggedIn bool
+		DevMode    bool
+		Name       string
+		Email      string
+		Photo      string
+		Membership string
+		TimeStamp  time.Time
+	}{
+		IsLoggedIn: GetSessionValue(session, "isLoggedIn").(bool),
+		DevMode:    devMode,
+		Name:       GetSessionValue(session, "user_name").(string),
+		Email:      GetSessionValue(session, "user_email").(string),
+		Photo:      GetSessionValue(session, "user_photo").(string),
+		Membership: GetSessionValue(session, "user_membership").(string),
+		TimeStamp:  time.Now(),
+	}
+
+	if devMode {
+		tmpl, err := template.ParseFiles("static/base.html", "static/daftar.html")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = tmpl.ExecuteTemplate(w, "base.html", data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+	} else {
+		log.Println("Production code daftar")
+		err = templates.ExecuteTemplate(w, "base.html", data)
+		if err != nil {
+			log.Println("Ada error di daftar")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
 }
 
 func VerifyTokenHandler(w http.ResponseWriter, r *http.Request) {
