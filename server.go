@@ -71,6 +71,7 @@ func main() {
 
 	r.Use(sessionMiddleware)
 	// Handle root / default route
+	//r.HandleFunc("/", DummyHandler)
 	r.HandleFunc("/", HomeHandler)
 	r.HandleFunc("/about", AboutHandler)
 	r.HandleFunc("/search", SearchHandler).Methods("GET")
@@ -187,6 +188,11 @@ func AboutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("About"))
 }
 
+func DummyHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("DummyHandler")
+	w.Write([]byte("DummyHandler"))
+}
+
 // Form login yang tidak akan dipakai lagi
 func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/login.html")
@@ -256,30 +262,38 @@ func GetSessionValue(session *sessions.Session, key string) interface{} {
 
 // TODO: Buat middleware ini mempersiapkan semua variable session yang PASTI dipakai
 // di semua route. Nanti di tiap route dia akan mengekstrak data session yang sesuai
+// Ini berarti harus ada IF untuk pemanggilan jika user BARU PERTAMA KALI membuka web ini.
+// TODO kenapa ssession middleware dan routenya sptnya dipanggil 2x?
 func sessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Setup session di sini
+		log.Println("SessionMW")
 		session, err := store.Get(r, "session-name")
 		if err != nil {
 			http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
 			return
 		}
+		_, ok := session.Values["newcomer"]
 
-		//TODO: buat helper yang mengambil dan atau menset nilai default suatu nilai disession
-		_ = SetSessionValue(session, "isLoggedIn", false)
-		_ = SetSessionValue(session, "user_name", "Default Name").(string)
-		_ = SetSessionValue(session, "user_email", "email@default.com").(string)
-		_ = SetSessionValue(session, "user_photo", "static/img/v1.jpeg").(string)
-		_ = SetSessionValue(session, "user_membership", "").(string)
+		// User pertama kali membuka situs ini, set newcomer = true
+		if !ok {
+			log.Println("1st time")
+			session.Values["newcomer"] = true
 
-		// Jangan lupa untuk menyimpan perubahan session setelah melakukan penyetelan
-		err = session.Save(r, w)
-		if err != nil {
-			// Handle error saat menyimpan session
-			log.Printf("Error saving session: %v", err)
+			//Gunakan tempat ini untuk melakukan setting nilai awal utnuk pengunjung baru
+			_ = SetSessionValue(session, "isLoggedIn", false)
+			_ = SetSessionValue(session, "user_name", "Default Name").(string)
+			_ = SetSessionValue(session, "user_email", "email@default.com").(string)
+			_ = SetSessionValue(session, "user_photo", "static/img/v1.jpeg").(string)
+			_ = SetSessionValue(session, "user_membership", "").(string)
+
+			err = session.Save(r, w)
+			if err != nil {
+				// Handle error saat menyimpan session
+				log.Printf("Error saving session: %v", err)
+			}
+
 		}
-
-		// Simpan session ke context request agar bisa diakses di handler
+		// Simpan session ke context request agar bisa diakses di handler selanjutnya
 		ctx := context.WithValue(r.Context(), "session", session)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -287,7 +301,7 @@ func sessionMiddleware(next http.Handler) http.Handler {
 
 // Halaman utama aplikasi
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-
+	log.Println("HomeHandler")
 	//NOTE: Dulu data disiapkan disini sebagai variable local di function ini
 	//Sekarang data diambil dari session, dimana session disiapkan di sessionMiddleWare
 	//NOTE: lanjutkan sessionMiddleWare agar data bisa disiapkan dengan variable dari
@@ -358,6 +372,7 @@ CHECKBOXES:
 - Total belajar 300-400jam menembus job
 */
 func DaftarHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("DaftarHandler")
 	session, err := store.Get(r, "session-name")
 	if err != nil {
 		http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
