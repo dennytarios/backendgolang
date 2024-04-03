@@ -65,7 +65,7 @@ func clearSessionHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	devMode = os.Getenv("DEV_MODE") == "true" // TODO: mungkin akan kepakai
 
-	initFirebaseAdmin()
+	//initFirebaseAdmin()
 	precompileTemplate()
 	r := mux.NewRouter()
 
@@ -294,7 +294,7 @@ func GetSessionValue(session *sessions.Session, key string) interface{} {
 // TODO kenapa ssession middleware dan routenya sptnya dipanggil 2x?
 func sessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("SessionMW")
+		log.Println("SessionMW URL : ", r.URL.String())
 		session, err := store.Get(r, "session-name")
 		if err != nil {
 			http.Error(w, "Gagal mendapatkan session", http.StatusInternalServerError)
@@ -350,6 +350,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		TimeStamp  time.Time
 	}{
 		IsLoggedIn: GetSessionValue(session, "isLoggedIn").(bool),
+		//IsLoggedIn: false,
 		DevMode:    devMode,
 		Name:       GetSessionValue(session, "user_name").(string),
 		Email:      GetSessionValue(session, "user_email").(string),
