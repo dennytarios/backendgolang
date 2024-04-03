@@ -10,8 +10,8 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    {{ if .DevMode }}
-        <link href="style/global.css?v={{ .TimeStamp}}" rel="stylesheet">
+    {{ if .Base.DevMode }}
+        <link href="style/global.css?v={{ .Base.TimeStamp}}" rel="stylesheet">
     {{ else }}
         <link href="style/global.css" rel="stylesheet">
     {{ end }}
@@ -30,10 +30,10 @@
         </div>-->
       <div id="mobileMenu" class="md:hidden relative">
           <button id="menuButton" class="text-white hover:text-gray-200 focus:outline-none flex items-center">
-            {{ if not .IsLoggedIn}}
+            {{ if not .Base.IsLoggedIn}}
               <img src="https://via.placeholder.com/20" alt="Avatar" class="rounded-full" /> <!-- Ganti URL gambar sesuai kebutuhan -->
             {{ else }}
-              <img src="{{ .Photo}}" alt="Avatar" class="rounded-full w-5 h-5" /> <!-- Ganti URL gambar sesuai kebutuhan -->
+              <img src="{{ .Base.Photo}}" alt="Avatar" class="rounded-full w-5 h-5" /> <!-- Ganti URL gambar sesuai kebutuhan -->
             {{ end }}
           </button>
           <!-- Menu Popup -->
@@ -121,7 +121,7 @@ document.addEventListener('click', function(event) {
 </div>
 
 <div id="content" class="p-5">
-{{template "content" .}}
+    {{ .Content}}
 </div>
 
 <!-- Footer -->

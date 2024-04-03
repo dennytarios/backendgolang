@@ -2,8 +2,10 @@ package main
 
 // Package yang digunakan
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -64,9 +66,7 @@ func main() {
 	devMode = os.Getenv("DEV_MODE") == "true" // TODO: mungkin akan kepakai
 
 	initFirebaseAdmin()
-	if !devMode {
-		precompileTemplate()
-	}
+	precompileTemplate()
 	r := mux.NewRouter()
 
 	r.Use(sessionMiddleware)
@@ -141,6 +141,34 @@ func precompileTemplate() {
 		fmt.Println(t.Name())
 	}
 
+}
+
+func renderTemplates(w http.ResponseWriter, contentTemplate string, data interface{}) error {
+	// Render content template
+	var contentBuffer bytes.Buffer
+
+	err := templates.ExecuteTemplate(&contentBuffer, contentTemplate, nil)
+	if err != nil {
+		err := errors.New("Error executing content template: " + err.Error())
+		log.Println(err)
+		return err
+	}
+	contentString := contentBuffer.String()
+	// Input html to data base.html
+	dataForMaster := struct {
+		Base    interface{}
+		Content template.HTML
+	}{
+		Base:    data,
+		Content: template.HTML(contentString),
+	}
+
+	err = templates.ExecuteTemplate(w, "base.html", dataForMaster)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Error executing master template: " + err.Error())
+	}
+	return nil
 }
 
 var FirebaseAuthClient *auth.Client
@@ -330,23 +358,10 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		TimeStamp:  time.Now(),
 	}
 
-	if devMode {
-		tmpl, err := template.ParseFiles("static/base.html", "static/index.html")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		err = tmpl.ExecuteTemplate(w, "base.html", data)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-
-	} else {
-		log.Println("Production code /")
-		err = templates.ExecuteTemplate(w, "base.html", data)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+	log.Println("Development Mode : ", devMode)
+	err = renderTemplates(w, "index.html", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -397,24 +412,12 @@ func DaftarHandler(w http.ResponseWriter, r *http.Request) {
 		TimeStamp:  time.Now(),
 	}
 
-	if devMode {
-		tmpl, err := template.ParseFiles("static/base.html", "static/daftar.html")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		err = tmpl.ExecuteTemplate(w, "base.html", data)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+	log.Println("Development Mode : ", devMode)
 
-	} else {
-		log.Println("Production code daftar")
-		err = templates.ExecuteTemplate(w, "base.html", data)
-		if err != nil {
-			log.Println("Ada error di daftar")
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+	err = renderTemplates(w, "daftar.html", data)
+	if err != nil {
+		log.Println("Ada error di daftar")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
