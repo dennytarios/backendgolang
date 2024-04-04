@@ -3,19 +3,19 @@ package main
 // Package yang digunakan
 import (
 	"bytes"
+	"cloud.google.com/go/firestore"
 	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/fsnotify/fsnotify"
+	"github.com/gorilla/sessions"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
-
-	"cloud.google.com/go/firestore"
-	"github.com/gorilla/sessions"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
@@ -65,8 +65,37 @@ func clearSessionHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	devMode = os.Getenv("DEV_MODE") == "true" // TODO: mungkin akan kepakai
 
-	//initFirebaseAdmin()
-	precompileTemplate()
+	initFirebaseAdmin()
+	if !devMode {
+		precompileTemplate()
+	} else {
+		// Menggunakan fsnotify untuk memantau perubahan file
+		// Jika ada perubahan, template akan di compile tanpa harus restart
+		watcher, err := fsnotify.NewWatcher()
+		if err != nil {
+			log.Fatal("Error creating watcher:", err)
+		}
+		defer watcher.Close()
+
+		err = watcher.Add("static")
+		if err != nil {
+			log.Fatal("Error adding watcher:", err)
+		}
+
+		go func() {
+			for {
+				select {
+				case event := <-watcher.Events:
+					if event.Op&fsnotify.Write == fsnotify.Write {
+						log.Println("Template file modified:", event.Name)
+						precompileTemplate()
+					}
+				case err := <-watcher.Errors:
+					log.Println("Error watching templates:", err)
+				}
+			}
+		}()
+	}
 	r := mux.NewRouter()
 
 	r.Use(sessionMiddleware)
